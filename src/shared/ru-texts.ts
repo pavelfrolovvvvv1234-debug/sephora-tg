@@ -38,7 +38,7 @@ export function getProfileTextRu(params: ProfileTextRuParams): string {
   const { userId, statusKey, balanceStr, primeLine } = params;
   const idSafe = String(userId).split("").join("&#8203;");
   const userStatus = PROFILE_STATUS_RU[statusKey] ?? "👤 Пользователь";
-  return `<b>├ 💻 DIOR ПРОФИЛЬ</b>
+  return `<b>├ 💻 SEPHORA ПРОФИЛЬ</b>
 │
 └ <b>✅ СТАТИСТИКА</b>
     ├ ID: ${idSafe}

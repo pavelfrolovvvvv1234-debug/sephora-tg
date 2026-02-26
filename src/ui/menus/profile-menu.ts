@@ -11,6 +11,7 @@ import { ScreenRenderer } from "../screens/renderer.js";
 import { UserRepository } from "../../infrastructure/db/repositories/UserRepository.js";
 import { getProfileTextRu } from "../../shared/ru-texts.js";
 import { invalidateUser } from "../../shared/user-cache.js";
+import { getAdminTelegramIds } from "../../app/config.js";
 
 const PROFILE_LINKS_EN =
   '<a href="https://sephora.host">Web Site</a> | <a href="https://t.me/sephorahost">Support</a> | <a href="https://t.me/+C27tBPXXpj40ZGE6">Sephora News</a>';
@@ -64,7 +65,7 @@ export async function getProfileText(
     });
   }
 
-  return `<b>┠💻 DIOR PROFILE
+  return `<b>┠💻 SEPHORA PROFILE
 ┃
 ┗✅ STATS:
     ┠ ID: ${idSafe}
@@ -155,6 +156,22 @@ export const profileMenu = new Menu<AppContext>("profile-menu", { onMenuOutdated
     }
   })
   .row()
+  .dynamic(async (ctx, range) => {
+    if (!ctx.hasChatType("private")) return;
+    const telegramId = ctx.chatId ?? ctx.from?.id;
+    if (!telegramId) return;
+    const adminIds = getAdminTelegramIds();
+    if (adminIds.length > 0 && adminIds.includes(Number(telegramId))) {
+      range.text(ctx.t("button-admin-panel"), async (ctx) => {
+        const { adminMenu } = await import("./admin-menu.js");
+        await ctx.editMessageText(ctx.t("admin-panel-header"), {
+          parse_mode: "HTML",
+          reply_markup: adminMenu,
+        });
+      });
+      range.row();
+    }
+  })
   .back(
     (ctx) => ctx.t("button-back"),
     async (ctx) => {
