@@ -8,7 +8,7 @@ welcome = Sephora Host • Bulletproof Infrastructure
  
  Order and manage hosting services directly in this bot.
  24/7 uptime • Bulletproof • Offshore
- @sephorahost
+ @sephora_sup
  
  {quoted-balance}
 
@@ -24,7 +24,7 @@ support = We are always here to help! 🤝
 
  Write our support right now!
 
- <a href="https://sephora.host/">Web Site</a> | <a href="https://t.me/sephorahost">Support</a> | <a href="https://t.me/+C27tBPXXpj40ZGE6">Sephora News</a>
+ <a href="https://t.me/sephora_sup">Support</a> | <a href="https://t.me/sephora_news">Sephora News</a>
 
 support-message-template = Hello!
  I have a question.

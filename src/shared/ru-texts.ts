@@ -12,7 +12,7 @@ export function getWelcomeTextRu(balance: number): string {
 
 Покупка и управление услугами хостинга прямо в тг боте
 24/7 работа • Абузоустойчивость • Офшорность
-@sephorahost
+@sephora_sup
 
 <blockquote>Баланс: ${b} $</blockquote>`;
 }
@@ -24,7 +24,7 @@ const PROFILE_STATUS_RU: Record<string, string> = {
 };
 
 const PROFILE_LINKS_RU =
-  '<a href="https://sephora.host">Web Site</a> | <a href="https://t.me/sephorahost">Support</a> | <a href="https://t.me/+C27tBPXXpj40ZGE6">Sephora News</a>';
+  '<a href="https://t.me/sephora_sup">Support</a> | <a href="https://t.me/sephora_news">Sephora News</a>';
 
 export interface ProfileTextRuParams {
   userId: number;

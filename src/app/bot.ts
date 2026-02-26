@@ -424,7 +424,7 @@ export async function createBot(): Promise<{
     .url(
       (ctx) => ctx.t("button-ask-question"),
       (ctx) => {
-        return `tg://resolve?domain=sephorahost&text=${encodeURIComponent(
+        return `tg://resolve?domain=sephora_sup&text=${encodeURIComponent(
           ctx.t("support-message-template")
         )}`;
       }

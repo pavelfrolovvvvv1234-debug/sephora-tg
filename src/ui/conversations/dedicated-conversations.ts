@@ -261,7 +261,7 @@ export async function createDedicatedOrderTicket(
 
     const { InlineKeyboard } = await import("grammy");
     const keyboard = new InlineKeyboard()
-      .url(ctx.t("button-support"), "tg://resolve?domain=sephorahost")
+      .url(ctx.t("button-support"), "tg://resolve?domain=sephora_sup")
       .row()
       .text(ctx.t("button-view-ticket"), `ticket_user_view_${ticket.id}`)
       .text(ctx.t("button-back"), "dedicated-menu-back");

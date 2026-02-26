@@ -1014,7 +1014,7 @@ export const domainManageServicesMenu = new Menu<AppContext>(
                 parse_mode: "HTML",
                 reply_markup: new InlineKeyboard().url(
                   ctx.t("button-support"),
-                  `tg://resolve?domain=sephorahost&text=${encodeURIComponent(
+                  `tg://resolve?domain=sephora_sup&text=${encodeURIComponent(
                     ctx.t("support-message-template")
                   )}`
                 ),

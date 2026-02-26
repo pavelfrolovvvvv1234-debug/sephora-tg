@@ -14,7 +14,7 @@ import { invalidateUser } from "../../shared/user-cache.js";
 import { getAdminTelegramIds } from "../../app/config.js";
 
 const PROFILE_LINKS_EN =
-  '<a href="https://sephora.host">Web Site</a> | <a href="https://t.me/sephorahost">Support</a> | <a href="https://t.me/+C27tBPXXpj40ZGE6">Sephora News</a>';
+  '<a href="https://t.me/sephora_sup">Support</a> | <a href="https://t.me/sephora_news">Sephora News</a>';
 
 /**
  * Build profile screen text including Prime subscription status (active until date or "no").

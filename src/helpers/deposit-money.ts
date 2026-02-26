@@ -59,7 +59,7 @@ async function handleTopupByMethod(
   if (method === "manual") {
     const amountWhole = Math.round(amount);
     const supportMessage = ctx.t("topup-manual-support-message", { amount: amountWhole });
-    const supportUrl = `tg://resolve?domain=sephorahost&text=${encodeURIComponent(supportMessage)}`;
+    const supportUrl = `tg://resolve?domain=sephora_sup&text=${encodeURIComponent(supportMessage)}`;
     await ctx.editMessageText(
       ctx.t("topup-manual-created", { amount: amountWhole, ticketId: "-" }),
       {
@@ -141,7 +141,7 @@ export const topupMethodMenu = new Menu<AppContext>("topup-method-menu")
       return;
     }
     const supportMessage = ctx.t("topup-manual-support-message-no-amount");
-    const supportUrl = `tg://resolve?domain=sephorahost&text=${encodeURIComponent(supportMessage)}`;
+    const supportUrl = `tg://resolve?domain=sephora_sup&text=${encodeURIComponent(supportMessage)}`;
     await ctx.editMessageText(ctx.t("topup-manual-support"), {
       reply_markup: new InlineKeyboard()
         .url(ctx.t("button-support"), supportUrl)

@@ -826,7 +826,7 @@ export async function handleDedicatedOsSelect(ctx: AppContext, osKey: string): P
   });
   const keyboard = new InlineKeyboard().url(
     ctx.t("button-go-to-support"),
-    `tg://resolve?domain=sephorahost&text=${encodeURIComponent(supportText)}`
+    `tg://resolve?domain=sephora_sup&text=${encodeURIComponent(supportText)}`
   );
   await ctx.reply(ctx.t("dedicated-contact-support-message"), {
     reply_markup: keyboard,

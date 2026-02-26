@@ -8,7 +8,7 @@ welcome = Sephora Host • Абузоустойчивая Инфраструкт
  
  Покупка и управление услугами хостинга прямо в тг боте
  24/7 работа • Абузоустойчивость • Офшорность
- @sephorahost
+ @sephora_sup
  
  {quoted-balance}
 
@@ -25,7 +25,7 @@ support = Мы всегда здесь, чтобы помочь! 🤝
 
  Напишите нашему саппорту прямо сейчас!
 
- <a href="https://sephora.host/">Web Site</a> | <a href="https://t.me/sephorahost">Support</a> | <a href="https://t.me/+C27tBPXXpj40ZGE6">Sephora News</a>
+ <a href="https://t.me/sephora_sup">Support</a> | <a href="https://t.me/sephora_news">Sephora News</a>
 
 support-message-template = Здравствуйте!
  У меня есть вопрос.
