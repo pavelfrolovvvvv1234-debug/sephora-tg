@@ -18,9 +18,9 @@ abuse-vds-service = 🔥 <strong>Bulletproof Virtual Private Server</strong> (<u
 dedicated-server =
   📃 Select the category of services to purchase
 
-  🖥 Dedicated Server
+  🖥 Dedicated Servers
 
 abuse-dedicated-server =
   📃 Select the category of services to purchase
 
-  🖥 Dedicated Server
+  🖥 Dedicated Servers

@@ -18,9 +18,9 @@ abuse-vds-service = 🔥 <strong>Абузоустойчивый виртуаль
 dedicated-server =
   📃 Select the category of services to purchase
 
-  🖥 Dedicated Server
+  🖥 Выделенные серверы
 
 abuse-dedicated-server =
   📃 Select the category of services to purchase
 
-  🖥 Dedicated Server
+  🖥 Выделенные серверы

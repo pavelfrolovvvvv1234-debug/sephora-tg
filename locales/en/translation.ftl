@@ -64,7 +64,7 @@ bundle-manage-header = <strong>🚀 Infrastructure Bundle</strong>
 
     Services purchased as a bundle (domain + VPS):
 bundle-manage-empty = You have no bundle services yet
-button-dedicated-server = 🖥 Dedicated Server
+button-dedicated-server = 🖥 Dedicated Servers
 button-balance = 💸 Balance
 button-standard = 🛡 Standard
 button-bulletproof = ⚜️ Bulletproof
