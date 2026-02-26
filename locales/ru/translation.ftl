@@ -548,7 +548,7 @@ ticket-request-server = Сервер
 
 # Выделенные серверы
 button-order-dedicated = 💳 Оформить заказ
-button-my-dedicated = 🖥 Выделенные
+button-my-dedicated = 🖥 Выделенные серверы
 button-my-tickets = 🎫 Мои запросы
 dedicated-none = У вас нет выделенных серверов
 dedicated-status-requested = <strong>Запрос выделенного сервера</strong>

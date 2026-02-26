@@ -548,7 +548,7 @@ ticket-request-server = Server
 
 # Dedicated Servers
 button-order-dedicated = 💳 Make Order
-button-my-dedicated = 🖥 Dedicated
+button-my-dedicated = 🖥 Dedicated Servers
 button-my-tickets = 🎫 My Requests
 dedicated-none = You don't have any dedicated servers
 dedicated-status-requested = <strong>Dedicated Server Request</strong>
