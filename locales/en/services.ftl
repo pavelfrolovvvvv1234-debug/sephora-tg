@@ -1,6 +1,6 @@
 abuse-domains-service = 🔒 <strong>Bulletproof Domain</strong> – the best choice when facing domain blocking risks from regular registrars. <u>No KYC</u> and <u>linked registration</u> in two clicks. We register domains <u>for any content type</u>.
 
- 💰 Price: $80/year (any zone from list)
+ 💰 Price: $60/year (any zone from list)
  ♻️ Renewals available
  🔄 Transfer via support
 

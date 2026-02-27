@@ -452,68 +452,68 @@
   ],
   "domains": {
     ".com": {
-      "price": 80
+      "price": 60
     },
     ".org": {
-      "price": 80
+      "price": 60
     },
     ".net": {
-      "price": 80
+      "price": 60
     },
     ".biz": {
-      "price": 80
+      "price": 60
     },
     ".club": {
-      "price": 80
+      "price": 60
     },
     ".pro": {
-      "price": 80
+      "price": 60
     },
     ".uk": {
-      "price": 80
+      "price": 60
     },
     ".cc": {
-      "price": 80
+      "price": 60
     },
     ".io": {
-      "price": 99
+      "price": 79
     },
     ".us": {
-      "price": 80
+      "price": 60
     },
     ".at": {
-      "price": 80
+      "price": 60
     },
     ".ca": {
-      "price": 80
+      "price": 60
     },
     ".guru": {
-      "price": 80
+      "price": 60
     },
     ".link": {
-      "price": 80
+      "price": 60
     },
     ".info": {
-      "price": 80
+      "price": 60
     },
-    ".ac": { "price": 80 },
-    ".app": { "price": 80 },
-    ".bio": { "price": 80 },
-    ".bot": { "price": 80 },
-    ".cash": { "price": 80 },
-    ".co": { "price": 80 },
-    ".dev": { "price": 80 },
-    ".energy": { "price": 80 },
-    ".host": { "price": 80 },
-    ".money": { "price": 80 },
-    ".my": { "price": 80 },
-    ".one": { "price": 80 },
-    ".pw": { "price": 80 },
-    ".shop": { "price": 80 },
-    ".site": { "price": 80 },
-    ".skin": { "price": 80 },
-    ".team": { "price": 80 },
-    ".top": { "price": 80 },
-    ".vip": { "price": 80 }
+    ".ac": { "price": 60 },
+    ".app": { "price": 60 },
+    ".bio": { "price": 60 },
+    ".bot": { "price": 60 },
+    ".cash": { "price": 60 },
+    ".co": { "price": 60 },
+    ".dev": { "price": 60 },
+    ".energy": { "price": 60 },
+    ".host": { "price": 60 },
+    ".money": { "price": 60 },
+    ".my": { "price": 60 },
+    ".one": { "price": 60 },
+    ".pw": { "price": 60 },
+    ".shop": { "price": 60 },
+    ".site": { "price": 60 },
+    ".skin": { "price": 60 },
+    ".team": { "price": 60 },
+    ".top": { "price": 60 },
+    ".vip": { "price": 60 }
   }
 }
