@@ -930,7 +930,7 @@ export const domainManageServicesMenu = new Menu<AppContext>(
                          domain.status === "registering" ? "🔄" :
                          domain.status === "failed" ? "❌" : "⏳";
       range.text(
-        `${statusEmoji} ${domain.domain} (Amper)`,
+        `${statusEmoji} ${domain.domain} (amp)`,
         async (ctx) => {
           const { DomainRepository } = await import("@/infrastructure/db/repositories/DomainRepository");
           const domainRepo = new DomainRepository(ctx.appDataSource);

@@ -41,7 +41,7 @@ export class AmperDomainService {
       // Если API вернул ошибку формата — не можем определить доступность, считаем недоступным
       // (вызывающий код может использовать DomainR или другой провайдер)
       if (result.formatError) {
-        Logger.warn(`Amper API format error for ${domain}, cannot determine availability`);
+        Logger.warn(`amp API format error for ${domain}, cannot determine availability`);
         return false;
       }
       return result.available;
@@ -429,12 +429,12 @@ export class AmperDomainService {
       domainEntity.providerDomainId = amperInfo.domainId;
       domainEntity.ns1 = amperInfo.ns1 ?? null;
       domainEntity.ns2 = amperInfo.ns2 ?? null;
-      Logger.info(`Imported domain ${normalized} from Amper for user ${userId} (providerId: ${amperInfo.domainId})`);
+      Logger.info(`Imported domain ${normalized} from amp for user ${userId} (providerId: ${amperInfo.domainId})`);
     } else {
       domainEntity.providerDomainId = null;
       domainEntity.ns1 = null;
       domainEntity.ns2 = null;
-      Logger.info(`Added domain ${normalized} to user ${userId} (stub, Amper list empty — domainId will be resolved on NS update)`);
+      Logger.info(`Added domain ${normalized} to user ${userId} (stub, amp list empty — domainId will be resolved on NS update)`);
     }
 
     const saved = await this.domainRepository.getRepository().save(domainEntity);
@@ -449,7 +449,7 @@ export class AmperDomainService {
     const domain = await this.getDomainById(domainId);
     const trimmed = providerDomainId.trim();
     if (!trimmed) {
-      throw new BusinessError("Amper Domain ID не может быть пустым");
+      throw new BusinessError("amp Domain ID не может быть пустым");
     }
     domain.providerDomainId = trimmed;
     await this.domainRepository.getRepository().save(domain);

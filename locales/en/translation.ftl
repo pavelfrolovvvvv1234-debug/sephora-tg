@@ -770,7 +770,7 @@ Please try again later or contact support.
 domain-not-available = Domain {$domain} is not available for registration
 domain-not-available-with-reason = Domain {$domain} is not available for registration.
     Reason: {$reason}
-domain-check-unrelated-to-balance = ℹ️ Availability check is not related to balance. Amper balance is charged only when the domain is actually registered.
+domain-check-unrelated-to-balance = ℹ️ Availability check is not related to balance. amp balance is charged only when the domain is actually registered.
 
 Registrar reason: {$reason}
 domain-register-enter-period = Enter registration period in years (1-10):
@@ -800,15 +800,15 @@ Domain: {$domain}
 ID: {$domainId}
 Status: {$status}
 domain-register-failed = <strong>Domain Registration Failed</strong>\n\nReason: { $error }
-domain-register-failed-registrar-balance = Registrar (Amper) account has insufficient funds. Top up your balance in the Amper dashboard — then domain registration in the bot will work. Your bot balance was not charged (refunded).
+domain-register-failed-registrar-balance = Registrar (amp) account has insufficient funds. Top up your balance in the amp dashboard — then domain registration in the bot will work. Your bot balance was not charged (refunded).
 domain-register-failed-domain-taken = Domain <b>{$domain}</b> is already taken and unavailable for registration. Your balance was not charged (refunded).
 domain-register-failed-already-owned = Domain <b>{$domain}</b> is already registered to you. Add it to Services to change nameservers.
 domain-import-success = Domain <b>{$domain}</b> added to Services. Go to Services → domains to change nameservers.
-domain-import-not-found = Domain not found in Amper account. If you just registered it, wait a minute and try again.
+domain-import-not-found = Domain not found in amp account. If you just registered it, wait a minute and try again.
 button-domain-add-to-services = Add to Services
 domain-service-temporarily-unavailable = ⚠️ Domain registration service is temporarily unavailable (error { $statusCode }). Please try again later.
-domain-register-failed-network = ⚠️ Domain registration service is temporarily unavailable (network issue). Check Amper API availability or try again later. Your balance was not charged.
-domain-check-service-unavailable = ⚠️ Domain availability check is temporarily unavailable (error { $statusCode }). Amper service is overloaded or unavailable. Please try again later.
+domain-register-failed-network = ⚠️ Domain registration service is temporarily unavailable (network issue). Check amp API availability or try again later. Your balance was not charged.
+domain-check-service-unavailable = ⚠️ Domain availability check is temporarily unavailable (error { $statusCode }). amp service is overloaded or unavailable. Please try again later.
 
 Domain: {$domain}
 Error: {$error}
@@ -947,8 +947,8 @@ admin-domain-delete-not-found = Domain not found.
 admin-domain-register-prompt = Send domain name (e.g. <code>example.com</code>). The domain will be added to the user without payment. Cancel: /cancel
 admin-domain-register-success = Domain <b>{$domain}</b> registered via Amper and added for user.
 admin-domain-register-success-local = Domain <b>{$domain}</b> added for user. You can set NS or Amper ID in the domain list if needed.
-admin-domain-register-success-local-no-amper = Domain <b>{$domain}</b> added for user (local only). To register via Amper: add <code>AMPER_API_BASE_URL</code> and <code>AMPER_API_TOKEN</code> to <code>.env</code> on the server, then restart the bot (<code>pm2 restart sephora-host-bot</code>).
-admin-domain-register-success-local-amper-failed = Domain <b>{$domain}</b> added for user (local only). Amper registration failed: {$error}
+admin-domain-register-success-local-no-amper = Domain <b>{$domain}</b> added for user (local only). To register via amp: add <code>AMPER_API_BASE_URL</code> and <code>AMPER_API_TOKEN</code> to <code>.env</code> on the server, then restart the bot (<code>pm2 restart sephora-host-bot</code>).
+admin-domain-register-success-local-amper-failed = Domain <b>{$domain}</b> added for user (local only). amp registration failed: {$error}
 admin-domain-register-cancelled = Cancelled.
 admin-domain-register-failed = Failed: {$error}
 admin-user-referrals-summary = <strong>Referral</strong>
@@ -1119,5 +1119,5 @@ VPS ID: { $vdsId }
 IP: { $ip }
 bundle-purchase-domain-only = Domain <b>{ $domain }</b> registered successfully.
 VPS is temporarily unavailable (VMManager not connected). When you connect it, bundles with VPS will work.
-bundle-unavailable-no-vm-no-amper = Bundle unavailable: VPS (VMManager) and domains (Amper) are not configured. Set up .env and try again later.
+bundle-unavailable-no-vm-no-amper = Bundle unavailable: VPS (VMManager) and domains (amp) are not configured. Set up .env and try again later.
 bundle-select-period = Select payment period:

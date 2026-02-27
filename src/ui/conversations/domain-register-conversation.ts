@@ -210,7 +210,7 @@ export async function domainRegisterConversation(
     // Если Amper возвращает ошибку формата — не можем проверить заранее
     // Продолжаем регистрацию, Amper проверит доступность при регистрации
     if (availability.formatError === true) {
-      Logger.warn(`Amper format error for ${fullDomain}, proceeding with registration - Amper will check availability`);
+      Logger.warn(`amp format error for ${fullDomain}, proceeding with registration - amp will check availability`);
       // Показываем предупреждение, но продолжаем
       await ctx.reply(
         safeT(ctx, "domain-check-format-warning", {

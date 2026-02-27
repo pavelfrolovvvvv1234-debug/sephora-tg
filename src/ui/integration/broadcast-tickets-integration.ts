@@ -1396,7 +1396,7 @@ Are you sure you want to proceed?`,
         await safeEditMessageText(ctx, ctx.t("domain-import-not-found"), { parse_mode: "HTML" });
       }
     } catch (error: any) {
-      Logger.error("Failed to import domain from Amper:", error);
+      Logger.error("Failed to import domain from amp:", error);
       await ctx.answerCallbackQuery(ctx.t("error-unknown", { error: "Unknown error" }).substring(0, 200));
     }
   });

@@ -246,7 +246,7 @@ export function registerDomainRegistrationMiddleware(
           message = errMsg;
         }
         
-        Logger.error("Amper domain registration failed", { domain, userId: session.main.user.id, error: err });
+        Logger.error("amp domain registration failed", { domain, userId: session.main.user.id, error: err });
         
         const alertText = isRegistrarBalance
           ? ctx.t("domain-register-failed-registrar-balance")

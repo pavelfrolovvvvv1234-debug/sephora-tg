@@ -1742,7 +1742,7 @@ async function index() {
           timeoutMs: parseInt(process.env.AMPER_API_TIMEOUT_MS || "8000"),
         });
         const result = await provider.checkAvailability(domain);
-        Logger.info(`[DomainCheck] Amper result for ${domain}:`, {
+        Logger.info(`[DomainCheck] amp result for ${domain}:`, {
           available: result.available,
           formatError: result.formatError,
           reason: result.reason,

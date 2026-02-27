@@ -111,7 +111,7 @@ export class AmperDomainsProvider implements DomainProvider {
         const name = domain.slice(0, lastDot);
         const tld = domain.slice(lastDot + 1);
         if (name && tld) {
-          Logger.info(`[Amper] check retry with name=${name}, tld=${tld}`);
+          Logger.info(`[amp] check retry with name=${name}, tld=${tld}`);
           const retryResult = await this.checkAvailabilityOnce(domain, {
             name,
             tld,
@@ -120,7 +120,7 @@ export class AmperDomainsProvider implements DomainProvider {
         }
       }
       // Amper check не поддерживает формат — проверяем через WHOIS
-      Logger.info(`[Amper] check returned VALIDATION_ERROR for ${domain}, using WHOIS fallback`);
+      Logger.info(`[amp] check returned VALIDATION_ERROR for ${domain}, using WHOIS fallback`);
       const whoisResult = await checkAvailabilityWhois(domain);
       return whoisResult;
     }
@@ -135,12 +135,12 @@ export class AmperDomainsProvider implements DomainProvider {
     params: { domain?: string; name?: string; tld?: string }
   ): Promise<DomainAvailabilityResult> {
     try {
-      Logger.info(`[Amper] Checking availability for ${domain} with params:`, params);
+      Logger.info(`[amp] Checking availability for ${domain} with params:`, params);
       const response = await this.client.get(`${this.apiPrefix}/domains/check`, {
         params,
       });
       const data = response.data ?? {};
-      Logger.info(`[Amper] Check response for ${domain}:`, {
+      Logger.info(`[amp] Check response for ${domain}:`, {
         status: response.status,
         data: JSON.stringify(data),
       });
@@ -152,7 +152,7 @@ export class AmperDomainsProvider implements DomainProvider {
         data?.data?.reason ||
         data?.error ||
         undefined;
-      Logger.info(`[Amper] Parsed availability for ${domain}:`, {
+      Logger.info(`[amp] Parsed availability for ${domain}:`, {
         available,
         reason,
       });
@@ -180,7 +180,7 @@ export class AmperDomainsProvider implements DomainProvider {
       // Временные ошибки сервера (502, 503, 504) - можно повторить позже
       if (statusCode === 502 || statusCode === 503 || statusCode === 504) {
         Logger.warn(
-          `[Amper] Temporary server error ${statusCode} for ${domain} - service unavailable`
+          `[amp] Temporary server error ${statusCode} for ${domain} - service unavailable`
         );
         return {
           available: false,
@@ -209,7 +209,7 @@ export class AmperDomainsProvider implements DomainProvider {
       }
 
       if (statusCode === 401 || apiError?.code === "INVALID_API_KEY") {
-        throw new Error("Invalid or expired Amper API key. Check AMPER_API_TOKEN in .env");
+        throw new Error("Invalid or expired amp API key. Check AMPER_API_TOKEN in .env");
       }
 
       throw new Error(errorMessage);
@@ -290,7 +290,7 @@ export class AmperDomainsProvider implements DomainProvider {
 
     // If we can't determine, log warning and default to false (safer)
     Logger.warn(
-      "Amper checkAvailability: could not parse available status from response",
+      "amp checkAvailability: could not parse available status from response",
       JSON.stringify(data)
     );
     
@@ -331,7 +331,7 @@ export class AmperDomainsProvider implements DomainProvider {
     }
     // Amper возвращает 400 VALIDATION_ERROR на оба варианта параметров — отдаём заглушку, чтобы бот не падал
     Logger.warn(
-      `Amper getPrice: 400 for ${tldNorm}. Уточните формат в https://amper.lat/api/v1/docs или у поддержки Amper.`
+      `amp getPrice: 400 for ${tldNorm}. Уточните формат в https://amper.lat/api/v1/docs или у поддержки amp.`
     );
     return { tld: tldNorm, period, price: 0, currency: "USD" };
   }
@@ -356,10 +356,10 @@ export class AmperDomainsProvider implements DomainProvider {
       if (request.contact && Object.keys(request.contact).length > 0) {
         body.contact = request.contact;
       }
-      Logger.info(`[Amper] Registering domain ${request.domain}`, { body });
+      Logger.info(`[amp] Registering domain ${request.domain}`, { body });
       const response = await this.client.post(`${this.apiPrefix}/domains/register`, body);
       const d = response.data ?? {};
-      Logger.info(`[Amper] Register response for ${request.domain}:`, {
+      Logger.info(`[amp] Register response for ${request.domain}:`, {
         status: response.status,
         data: JSON.stringify(d),
       });
@@ -367,7 +367,7 @@ export class AmperDomainsProvider implements DomainProvider {
       const domainId = this.getResp<string>(d, "domainId", "domain_id");
       const operationId = this.getResp<string>(d, "operationId", "operation_id");
       const error = this.getResp<string>(d, "error");
-      Logger.info(`[Amper] Parsed result for ${request.domain}:`, {
+      Logger.info(`[amp] Parsed result for ${request.domain}:`, {
         success,
         domainId,
         operationId,
@@ -378,7 +378,7 @@ export class AmperDomainsProvider implements DomainProvider {
       const statusCode = error.response?.status;
       const statusText = error.response?.statusText;
       
-      Logger.error(`[Amper] Failed to register domain ${request.domain}:`, {
+      Logger.error(`[amp] Failed to register domain ${request.domain}:`, {
         status: statusCode,
         statusText,
         data: JSON.stringify(error.response?.data),
@@ -399,7 +399,7 @@ export class AmperDomainsProvider implements DomainProvider {
       
       // 402 / INSUFFICIENT_BALANCE — на счёте Amper нет средств
       if (statusCode === 402 || apiError?.code === "INSUFFICIENT_BALANCE") {
-        return { success: false, error: "Insufficient balance on registrar (Amper). Top up Amper account." };
+        return { success: false, error: "Insufficient balance on registrar (amp). Top up amp account." };
       }
       const errMsg =
         (typeof apiError === "object" && apiError?.message ? apiError.message : null) ||
@@ -446,7 +446,7 @@ export class AmperDomainsProvider implements DomainProvider {
         : Array.isArray(raw) ? raw
         : [];
       if (list.length === 0 && raw && typeof raw === "object") {
-        Logger.warn(`[Amper] listDomains empty`, {
+        Logger.warn(`[amp] listDomains empty`, {
           userId: userId || "(all)",
           responseKeys: Object.keys(raw),
           status: response.status,
@@ -482,7 +482,7 @@ export class AmperDomainsProvider implements DomainProvider {
         : [];
       return list.map((d: any) => this.mapDomainInfo(d));
     } catch (error: any) {
-      Logger.error(`[Amper] listDomainsByDomain(${domainName}) failed:`, {
+      Logger.error(`[amp] listDomainsByDomain(${domainName}) failed:`, {
         message: error.message,
         status: error.response?.status,
       });
@@ -560,7 +560,7 @@ export class AmperDomainsProvider implements DomainProvider {
     } catch (err: any) {
       const msg = (err.response?.data?.error?.message || err.message || "").toLowerCase();
       if (err.response?.status === 400 && msg.includes("expected array")) {
-        Logger.info(`[Amper] updateNameservers: retry with nameservers array`);
+        Logger.info(`[amp] updateNameservers: retry with nameservers array`);
         try {
           return await tryBody({
             nameservers: [request.ns1, request.ns2].filter(Boolean),

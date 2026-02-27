@@ -80,7 +80,7 @@ export async function checkAvailabilityWhois(domain: string): Promise<DomainAvai
     const isNetworkError =
       /EHOSTUNREACH|ETIMEDOUT|ECONNREFUSED|ENOTFOUND|timeout|ECONNRESET|network/i.test(msg);
     if (isNetworkError) {
-      Logger.info(`[Whois] ${domain} — network error, allowing registration attempt (Amper will check)`);
+      Logger.info(`[Whois] ${domain} — network error, allowing registration attempt (amp will check)`);
       return { available: true, domain };
     }
     return {
