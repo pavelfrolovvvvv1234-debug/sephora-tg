@@ -61,8 +61,10 @@ export const ensureSessionUser = async (ctx: AppContext): Promise<boolean> => {
     isBanned: user.isBanned,
   };
 
-  if (!session.main.locale || session.main.locale === "0") {
-    session.main.locale = user.lang === "en" ? "en" : "ru";
+  if (user.lang === "en") {
+    session.main.locale = "en";
+  } else {
+    session.main.locale = "ru";
   }
 
   return true;

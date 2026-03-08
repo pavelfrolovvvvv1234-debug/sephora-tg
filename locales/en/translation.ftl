@@ -90,6 +90,14 @@ select-language = Select interface language
 
 button-go-to-site = Go to website
 button-user-agreement = User agreement
+button-terms = 📜 Terms of Service
+button-privacy = 🔒 Privacy Policy
+button-accept-terms = ✅ Accept Terms
+button-terms-more = More details
+
+terms-accept-prompt = To continue, please accept the terms of service and privacy policy:
+
+terms-more-header = View documents:
 
 button-send-promote-link = 📤 Send link
 
@@ -1121,3 +1129,86 @@ bundle-purchase-domain-only = Domain <b>{ $domain }</b> registered successfully.
 VPS is temporarily unavailable (VMManager not connected). When you connect it, bundles with VPS will work.
 bundle-unavailable-no-vm-no-amper = Bundle unavailable: VPS (VMManager) and domains (amp) are not configured. Set up .env and try again later.
 bundle-select-period = Select payment period:
+
+terms-full = <b>Terms of Service — Sephora Hosting</b>
+
+These Terms of Service govern the use of services provided by Sephora Hosting (hereinafter — "Sephora", "Company", "we"). By using the website, placing orders or interacting with our services, including the Telegram bot @S3phora_bot, the user agrees to these terms.
+
+<b>1. Definitions</b>
+Sephora / Company / We — hosting service Sephora Hosting.
+User / Client — any person using the service.
+Services — offshore dedicated servers, hosting infrastructure, domain registration, DNS services and service management via Telegram bot @S3phora_bot.
+Content — any data hosted or transmitted through the service infrastructure.
+
+<b>2. General Usage</b>
+The user agrees to use the infrastructure in a way that does not threaten network stability, equipment operation or other users.
+
+<b>3. Registration and Access</b>
+To use the services, place an order via the website or Telegram bot @S3phora_bot. The user must keep access data secure and control their account usage.
+
+<b>4. Infrastructure Usage</b>
+The user independently manages the server and materials hosted on it. The Company does not continuously monitor user content.
+
+<b>5. Privacy</b>
+Sephora Hosting respects user privacy. Personal information is not shared with third parties except as necessary for service operation or payment processing.
+
+<b>6. Service Activation</b>
+Services may be activated automatically after payment or after additional order verification.
+
+<b>7. Payment</b>
+All services are provided on a prepaid basis. Upon expiration of the paid period, the service may be temporarily suspended until renewal.
+
+<b>8. Complaints and Requests</b>
+Upon receiving complaints, the company may conduct an investigation and, if necessary, restrict certain service functions to maintain network stability.
+
+<b>9. Resource Usage</b>
+The user agrees to use server resources reasonably and not create excessive load on the infrastructure.
+
+<b>10. Limitation of Liability</b>
+Services are provided "as is". The Company is not liable for possible network interruptions or data loss.
+
+<b>11. Force Majeure</b>
+The Company is not liable for interruptions caused by circumstances beyond its control, including technical failures of infrastructure or networks.
+
+<b>12. Changes to Terms</b>
+The Company may update these terms. Continued use of services constitutes agreement with the updated version.
+
+<b>Contact:</b> Telegram: @S3phora_bot
+
+privacy-full = <b>Privacy Policy — Sephora Hosting</b>
+
+<b>General Information</b>
+Sephora Hosting ("Sephora", "we", "our service") respects users' privacy and strives to ensure secure handling of information. This Privacy Policy describes what data may be collected when using the website and services, and how it is used and protected. By using Sephora Hosting services or interacting with our services, including the Telegram bot @S3phora_bot, you agree to this policy.
+
+<b>1. Information We Collect</b>
+• During registration, ordering, support requests: email, contact details, payment information.
+• Sephora Hosting does not require mandatory provision of identity documents and does not conduct identification unless required for service maintenance.
+
+<b>2. Technical Information</b>
+• IP address, browser type, OS, pages visited, date and time of access. Used for stable operation and performance analysis.
+
+<b>3. Cookies</b>
+Used for proper site operation, saving settings and traffic analysis. Manage via browser settings.
+
+<b>4. Use of Information</b>
+• Providing hosting and domain registration services, payment processing, user communication, service improvement, security.
+
+<b>5. Data Retention</b>
+Information is stored only for as long as necessary. Data no longer required is deleted.
+
+<b>6. Security</b>
+Sephora Hosting applies technical and organizational measures: secure connections, network filters, access control, regular security audits. Absolute protection is not guaranteed.
+
+<b>7. Sharing with Third Parties</b>
+Sephora Hosting does not sell personal data. Sharing is possible only with payment systems, technical partners and when legally required.
+
+<b>8. User Rights</b>
+• Request information about stored data, update contact details, request account deletion — via support.
+
+<b>9. International Processing</b>
+Infrastructure may be located in various jurisdictions; processing is solely for service operation.
+
+<b>10. Policy Changes</b>
+Current version is published on the website. Continued use of services constitutes agreement with the updated policy.
+
+<b>Contact:</b> Telegram: @S3phora_bot

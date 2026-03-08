@@ -429,6 +429,54 @@ export async function createBot(): Promise<{
         )}`;
       }
     )
+    .row()
+    .text((ctx) => ctx.t("button-terms"), async (ctx) => {
+      await ctx.answerCallbackQuery().catch(() => {});
+      try {
+        const { sendTermsPdf } = await import("../helpers/send-docs-pdf.js");
+        const sent = await sendTermsPdf(ctx);
+        if (!sent) {
+          await ctx.editMessageText(ctx.t("terms-full"), {
+            parse_mode: "HTML",
+            reply_markup: new InlineKeyboard().text(ctx.t("button-back"), "legal-back-support"),
+          });
+        } else {
+          await ctx.reply("📜 Пользовательское соглашение", {
+            reply_markup: new InlineKeyboard().text(ctx.t("button-back"), "legal-back-support"),
+          });
+          await ctx.editMessageText("📜 Документ выше 👆").catch(() => {});
+        }
+      } catch {
+        await ctx.editMessageText(ctx.t("terms-full"), {
+          parse_mode: "HTML",
+          reply_markup: new InlineKeyboard().text(ctx.t("button-back"), "legal-back-support"),
+        });
+      }
+    })
+    .text((ctx) => ctx.t("button-privacy"), async (ctx) => {
+      await ctx.answerCallbackQuery().catch(() => {});
+      try {
+        const { sendPrivacyPdf } = await import("../helpers/send-docs-pdf.js");
+        const sent = await sendPrivacyPdf(ctx);
+        if (!sent) {
+          await ctx.editMessageText(ctx.t("privacy-full"), {
+            parse_mode: "HTML",
+            reply_markup: new InlineKeyboard().text(ctx.t("button-back"), "legal-back-support"),
+          });
+        } else {
+          await ctx.reply("🔒 Политика конфиденциальности", {
+            reply_markup: new InlineKeyboard().text(ctx.t("button-back"), "legal-back-support"),
+          });
+          await ctx.editMessageText("🔒 Документ выше 👆").catch(() => {});
+        }
+      } catch {
+        await ctx.editMessageText(ctx.t("privacy-full"), {
+          parse_mode: "HTML",
+          reply_markup: new InlineKeyboard().text(ctx.t("button-back"), "legal-back-support"),
+        });
+      }
+    })
+    .row()
     .back(
       (ctx) => ctx.t("button-back"),
       async (ctx) => {
@@ -441,6 +489,16 @@ export async function createBot(): Promise<{
         );
       }
     );
+
+  // Back from Terms/Privacy to support menu
+  bot.callbackQuery("legal-back-support", async (ctx) => {
+    await ctx.answerCallbackQuery().catch(() => {});
+    await ctx.editMessageText(ctx.t("support"), {
+      parse_mode: "HTML",
+      reply_markup: supportMenu,
+      link_preview_options: { is_disabled: true },
+    });
+  });
   
   // Prime "Back" handler MUST run before any menu so it catches prime-back-* callbacks
   const { registerPrimeBackHandler } = await import("../ui/integration/broadcast-tickets-integration.js");

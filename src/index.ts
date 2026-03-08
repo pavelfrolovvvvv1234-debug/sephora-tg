@@ -553,7 +553,7 @@ async function index() {
       return next();
     }
 
-    // ВСЕГДА синхронизируем локаль из user.lang (БД) — не используем кэш, иначе после смены языка остаётся старый lang
+    // Синхронизируем locale из user.lang. user.lang === null → "ru" по умолчанию (чтобы /start всегда показывал меню)
     const user =
       session.main.user.id > 0
         ? await ctx.appDataSource.getRepository(User).findOneBy({ id: session.main.user.id })
@@ -561,7 +561,6 @@ async function index() {
     if (user?.lang === "en") {
       session.main.locale = "en";
     } else {
-      // user.lang === "ru" | null — всегда русский
       session.main.locale = "ru";
     }
 
@@ -615,8 +614,61 @@ async function index() {
   registerAdminPromosHandlers(bot);
 
   // Register all menus FIRST, before language handler and commands
-  // This ensures menus are available when we try to use them
   bot.use(mainMenu);
+
+  // /start — приветствие + главное меню (регистрируем после mainMenu)
+  bot.command("start", async (ctx) => {
+    try {
+      const session = (await ctx.session) as SessionData;
+      const payload = ctx.match && typeof ctx.match === "string" ? ctx.match.trim() : "";
+
+      if (ctx.message) await ctx.deleteMessage().catch(() => {});
+
+      // /start reset — сбросить locale, показать выбор языка (для теста)
+      if (payload === "reset" || payload === "reset_lang") {
+        session.main.locale = "0";
+        const keyboard = new InlineKeyboard()
+          .text(ctx.t("button-change-locale-ru"), "lang_ru")
+          .text(ctx.t("button-change-locale-en"), "lang_en");
+        await ctx.reply(ctx.t("select-language"), {
+          reply_markup: keyboard,
+          parse_mode: "HTML",
+        });
+        return;
+      }
+
+      // Реферальная ссылка
+      if (payload.length > 0 && !payload.startsWith("promote_")) {
+        try {
+          const { ReferralService } = await import("./domain/referral/ReferralService.js");
+          const { UserRepository } = await import("./infrastructure/db/repositories/UserRepository.js");
+          const userRepo = new UserRepository(ctx.appDataSource);
+          const referralService = new ReferralService(ctx.appDataSource, userRepo);
+          const user = await userRepo.findById(session.main.user.id);
+          if (user && user.referrerId == null) {
+            await referralService.bindReferrer(user.id, payload);
+          }
+        } catch (err: any) {
+          Logger.error("[Referral] Failed to bind referrer:", err);
+        }
+      }
+
+      // Всегда показываем выбор языка и условий на /start
+      const keyboard = new InlineKeyboard()
+        .text(ctx.t("button-change-locale-ru"), "lang_ru")
+        .text(ctx.t("button-change-locale-en"), "lang_en");
+      await ctx.reply(ctx.t("select-language"), {
+        reply_markup: keyboard,
+        parse_mode: "HTML",
+      });
+    } catch (error: any) {
+      Logger.error("[Start] Error:", error);
+      await ctx.reply(ctx.t("welcome", { balance: 0 }), {
+        reply_markup: mainMenu,
+        parse_mode: "HTML",
+      }).catch(() => {});
+    }
+  });
   bot.use(adminMenu);
   bot.use(moderatorMenu);
   bot.use(ticketViewMenu);
@@ -815,32 +867,133 @@ async function index() {
       }
 
       ctx.fluent.useLocale(lang);
-      
-      const welcomeText = ctx.t("welcome", { balance: session.main.user.balance });
-      
+
+      // After language selection: show "Accept terms" screen
+      const termsAcceptKb = new InlineKeyboard()
+        .text(ctx.t("button-accept-terms"), "terms-accept")
+        .row()
+        .text(ctx.t("button-terms-more"), "terms-more");
+
       try {
-        await ctx.editMessageText(welcomeText, {
-          reply_markup: mainMenu,
+        await ctx.editMessageText(ctx.t("terms-accept-prompt"), {
+          reply_markup: termsAcceptKb,
           parse_mode: "HTML",
         });
       } catch (editError: any) {
         try {
           await ctx.deleteMessage().catch(() => {});
         } catch {}
-        await ctx.reply(welcomeText, {
-          reply_markup: mainMenu,
+        await ctx.reply(ctx.t("terms-accept-prompt"), {
+          reply_markup: termsAcceptKb,
           parse_mode: "HTML",
         });
       }
-      
-      // Stop execution - don't pass to other handlers
+
       return;
     } catch (error: any) {
       console.error(`[Lang] Error processing lang_${lang} callback:`, error);
       const errorText = lang === "ru" ? "Ошибка при выборе языка" : "Error selecting language";
       await ctx.answerCallbackQuery({ text: errorText, show_alert: true }).catch(() => {});
-      // Don't pass to next handler on error
       return;
+    }
+  });
+
+  // Terms accept: Accept -> welcome; Подробнее -> submenu (Terms, Privacy)
+  bot.callbackQuery("terms-accept", async (ctx) => {
+    await ctx.answerCallbackQuery().catch(() => {});
+    const welcomeText = ctx.t("welcome", { balance: (await ctx.session).main.user.balance });
+    try {
+      await ctx.editMessageText(welcomeText, {
+        reply_markup: mainMenu,
+        parse_mode: "HTML",
+      });
+    } catch {
+      await ctx.deleteMessage().catch(() => {});
+      await ctx.reply(welcomeText, {
+        reply_markup: mainMenu,
+        parse_mode: "HTML",
+      });
+    }
+  });
+
+  bot.callbackQuery("terms-more", async (ctx) => {
+    await ctx.answerCallbackQuery().catch(() => {});
+    const kb = new InlineKeyboard()
+      .text(ctx.t("button-terms"), "terms-more-terms")
+      .text(ctx.t("button-privacy"), "terms-more-privacy")
+      .row()
+      .text(ctx.t("button-back"), "terms-more-back");
+    await ctx.editMessageText(ctx.t("terms-more-header"), {
+      reply_markup: kb,
+      parse_mode: "HTML",
+    });
+  });
+
+  bot.callbackQuery("terms-more-back", async (ctx) => {
+    await ctx.answerCallbackQuery().catch(() => {});
+    const kb = new InlineKeyboard()
+      .text(ctx.t("button-accept-terms"), "terms-accept")
+      .row()
+      .text(ctx.t("button-terms-more"), "terms-more");
+    await ctx.editMessageText(ctx.t("terms-accept-prompt"), {
+      reply_markup: kb,
+      parse_mode: "HTML",
+    });
+  });
+
+  bot.callbackQuery("terms-more-terms", async (ctx) => {
+    await ctx.answerCallbackQuery().catch(() => {});
+    try {
+      const { sendTermsPdf } = await import("./helpers/send-docs-pdf.js");
+      const sent = await sendTermsPdf(ctx);
+      if (sent) {
+        const backKb = new InlineKeyboard().text(ctx.t("button-back"), "terms-more-back");
+        await ctx.reply("📜 Пользовательское соглашение", {
+          reply_markup: backKb,
+        });
+        await ctx.editMessageText("📜 Документ выше 👆").catch(() => {});
+      } else {
+        const backKb = new InlineKeyboard().text(ctx.t("button-back"), "terms-more-back");
+        await ctx.editMessageText(ctx.t("terms-full"), {
+          parse_mode: "HTML",
+          reply_markup: backKb,
+        });
+      }
+    } catch (err: any) {
+      Logger.error("[Start] sendTermsPdf failed:", err);
+      const backKb = new InlineKeyboard().text(ctx.t("button-back"), "terms-more-back");
+      await ctx.editMessageText(ctx.t("terms-full"), {
+        parse_mode: "HTML",
+        reply_markup: backKb,
+      });
+    }
+  });
+
+  bot.callbackQuery("terms-more-privacy", async (ctx) => {
+    await ctx.answerCallbackQuery().catch(() => {});
+    try {
+      const { sendPrivacyPdf } = await import("./helpers/send-docs-pdf.js");
+      const sent = await sendPrivacyPdf(ctx);
+      if (sent) {
+        const backKb = new InlineKeyboard().text(ctx.t("button-back"), "terms-more-back");
+        await ctx.reply("🔒 Политика конфиденциальности", {
+          reply_markup: backKb,
+        });
+        await ctx.editMessageText("🔒 Документ выше 👆").catch(() => {});
+      } else {
+        const backKb = new InlineKeyboard().text(ctx.t("button-back"), "terms-more-back");
+        await ctx.editMessageText(ctx.t("privacy-full"), {
+          parse_mode: "HTML",
+          reply_markup: backKb,
+        });
+      }
+    } catch (err: any) {
+      Logger.error("[Start] sendPrivacyPdf failed:", err);
+      const backKb = new InlineKeyboard().text(ctx.t("button-back"), "terms-more-back");
+      await ctx.editMessageText(ctx.t("privacy-full"), {
+        parse_mode: "HTML",
+        reply_markup: backKb,
+      });
     }
   });
 
@@ -871,57 +1024,6 @@ async function index() {
   //   createConversation(confirmDomainRegistration, "confirmDomainRegistration")
   // );
 
-  // Register /start command
-  bot.command("start", async (ctx) => {
-    try {
-      if (ctx.message) {
-        await ctx.deleteMessage().catch(() => {});
-      }
-
-      const session = (await ctx.session) as SessionData;
-      // Referral: bind referrer when user opens bot via ?start=REFERRER_TELEGRAM_ID
-      const payload = ctx.match && typeof ctx.match === "string" ? ctx.match.trim() : "";
-      if (payload.length > 0 && !payload.startsWith("promote_")) {
-        try {
-          const { ReferralService } = await import("./domain/referral/ReferralService.js");
-          const { UserRepository } = await import("./infrastructure/db/repositories/UserRepository.js");
-          const userRepo = new UserRepository(ctx.appDataSource);
-          const referralService = new ReferralService(ctx.appDataSource, userRepo);
-          const user = await userRepo.findById(session.main.user.id);
-          if (user && user.referrerId == null) {
-            await referralService.bindReferrer(user.id, payload);
-            Logger.info(`[Referral] Bound referrer for user ${user.id} with refCode ${payload}`);
-          }
-        } catch (err: any) {
-          Logger.error("[Referral] Failed to bind referrer:", err);
-        }
-      }
-
-      // Локаль уже выбрана — сразу показываем welcome (без моргания)
-      const hasLocale = session.main.locale && session.main.locale !== "0" && (session.main.locale === "ru" || session.main.locale === "en");
-      if (hasLocale) {
-        const welcomeText = ctx.t("welcome", { balance: session.main.user.balance });
-        await ctx.reply(welcomeText, {
-          reply_markup: mainMenu,
-          parse_mode: "HTML",
-        });
-        return;
-      }
-
-      // Только для новых пользователей без локали — выбор языка
-      const keyboard = new InlineKeyboard()
-        .text(ctx.t("button-change-locale-ru"), "lang_ru")
-        .text(ctx.t("button-change-locale-en"), "lang_en");
-      await ctx.reply(ctx.t("select-language"), {
-        reply_markup: keyboard,
-        parse_mode: "HTML",
-      });
-    } catch (error: any) {
-      console.error("[Start] Error in /start command:", error);
-      await ctx.reply("Error: " + (error.message || "Unknown error")).catch(() => {});
-    }
-  });
-  
   bot.use(promotePermissions());
   bot.use(promocodeQuestion.middleware());
   bot.use(vdsManageSpecific);

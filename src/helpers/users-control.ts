@@ -138,8 +138,12 @@ export async function buildControlPanelUserReply(
     }
   }
   const usernameDisplay =
-    un && un !== "Unknown" && !un.includes(" ")
-      ? (un.startsWith("@") ? un : `@${un}`)
+    un && un !== "Unknown"
+      ? un.startsWith("#")
+        ? un
+        : !un.includes(" ")
+          ? (un.startsWith("@") ? un : `@${un}`)
+          : un
       : "—";
   const stats = await getQuickUserStats(ctx.appDataSource, user.id, user.lastUpdateAt);
   const statusLabel = user.isBanned ? ctx.t("admin-user-status-banned") : ctx.t("admin-user-status-active");
@@ -264,17 +268,18 @@ export const controlUsers = new Menu<AppContext>("control-users", {})
       const maxPages = Math.max(0, Math.ceil(total / LIMIT_ON_PAGE) - 1);
 
       for (const user of users) {
-        let username = "";
+        let displayName = "";
         try {
-          const chat = await ctx.api.getChat(user.telegramId);
-          username = chat.username || `${chat.first_name} ${chat.last_name}`;
-        } catch (err) {
-          username = "Unknown";
+          const chat = await ctx.api.getChat(user.telegramId) as { username?: string; first_name?: string; last_name?: string };
+          const un = chat.username ?? [chat.first_name, chat.last_name].filter(Boolean).join(" ").trim();
+          displayName = un || `#${user.telegramId}`;
+        } catch {
+          displayName = `#${user.telegramId}`;
         }
 
         range
           .text(
-            `ID: ${username} (${user.id}) - ${user.balance} $`,
+            `ID: ${displayName} (${user.id}) - ${user.balance} $`,
             async (ctx) => {
               try {
                 await ctx.answerCallbackQuery().catch(() => {});
@@ -289,7 +294,7 @@ export const controlUsers = new Menu<AppContext>("control-users", {})
                   return;
                 }
                 const menu = getControlUserMenu();
-                const { text, reply_markup } = await buildControlPanelUserReply(ctx, fullUser, username, menu);
+                const { text, reply_markup } = await buildControlPanelUserReply(ctx, fullUser, displayName, menu);
                 await ctx.reply(text, { parse_mode: "HTML", reply_markup });
               } catch (err: unknown) {
                 const msg = err instanceof Error ? err.message : String(err);
