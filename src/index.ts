@@ -2218,7 +2218,7 @@ async function index() {
       console.error("[Bot] Failed to register vdsRateOs:", error);
     }
   }
-  profileMenu.register(topupMethodMenu, "profile-menu");
+  profileMenu.register(topupMethodMenu, "topup-method-menu");
   profileMenu.register(changeLocaleMenu, "profile-menu");
   topupMethodMenu.register(depositMenu, "topup-method-menu");
 
