@@ -108,10 +108,6 @@ export const topupMethodMenu = new Menu<AppContext>("topup-method-menu")
     await ctx.answerCallbackQuery().catch(() => {});
     const session = await ctx.session;
     session.main.topupMethod = "crystalpay";
-    if (session.main.lastSumDepositsEntered > 0) {
-      await handleTopupByMethod(ctx, "crystalpay", session.main.lastSumDepositsEntered);
-      return;
-    }
     await ctx.editMessageText(renderTopupAmountsText(ctx), {
       reply_markup: depositMenu,
       parse_mode: "HTML",
@@ -122,10 +118,6 @@ export const topupMethodMenu = new Menu<AppContext>("topup-method-menu")
     await ctx.answerCallbackQuery().catch(() => {});
     const session = await ctx.session;
     session.main.topupMethod = "cryptobot";
-    if (session.main.lastSumDepositsEntered > 0) {
-      await handleTopupByMethod(ctx, "cryptobot", session.main.lastSumDepositsEntered);
-      return;
-    }
     await ctx.editMessageText(renderTopupAmountsText(ctx), {
       reply_markup: depositMenu,
       parse_mode: "HTML",
@@ -136,10 +128,6 @@ export const topupMethodMenu = new Menu<AppContext>("topup-method-menu")
     await ctx.answerCallbackQuery().catch(() => {});
     const session = await ctx.session;
     session.main.topupMethod = "manual";
-    if (session.main.lastSumDepositsEntered > 0) {
-      await handleTopupByMethod(ctx, "manual", session.main.lastSumDepositsEntered);
-      return;
-    }
     const supportMessage = ctx.t("topup-manual-support-message-no-amount");
     const supportUrl = `tg://resolve?domain=sephora_sup&text=${encodeURIComponent(supportMessage)}`;
     await ctx.editMessageText(ctx.t("topup-manual-support"), {

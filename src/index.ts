@@ -140,8 +140,6 @@ export const mainMenu = new Menu<AppContext>("main-menu")
     (ctx) => ctx.t("button-balance"),
     async (ctx) => {
       await ctx.answerCallbackQuery().catch(() => {});
-      const session = (await ctx.session) as SessionData;
-      session.main.lastSumDepositsEntered = 0;
       await ctx.editMessageText(ctx.t("topup-select-method"), {
         reply_markup: topupMethodMenu,
         parse_mode: "HTML",
@@ -202,15 +200,7 @@ const supportMenu = new Menu<AppContext>("support-menu", {
   );
 
 const profileMenu = new Menu<AppContext>("profile-menu", { onMenuOutdated: false })
-  .text((ctx) => ctx.t("button-deposit"), async (ctx) => {
-    await ctx.answerCallbackQuery().catch(() => {});
-    const session = (await ctx.session) as SessionData;
-    session.main.lastSumDepositsEntered = 0;
-    await ctx.editMessageText(ctx.t("topup-select-method"), {
-      reply_markup: topupMethodMenu,
-      parse_mode: "HTML",
-    });
-  })
+  .submenu((ctx) => ctx.t("button-deposit"), "topup-method-menu")
   .row()
   .text(
     (ctx) => ctx.t("button-referrals"),
@@ -2228,6 +2218,7 @@ async function index() {
       console.error("[Bot] Failed to register vdsRateOs:", error);
     }
   }
+  profileMenu.register(topupMethodMenu, "topup-method-menu");
   profileMenu.register(changeLocaleMenu, "profile-menu");
   topupMethodMenu.register(depositMenu, "topup-method-menu");
 
