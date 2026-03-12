@@ -225,6 +225,21 @@ export class AmperDomainService {
         `Registered domain ${fullDomain} for user ${userId} (domain ID: ${savedDomain.id})`
       );
 
+      // Apply referral reward for domain purchase (after successful registration)
+      try {
+        const { ReferralService } = await import("../referral/ReferralService.js");
+        const { UserRepository } = await import("../../infrastructure/db/repositories/UserRepository.js");
+        const referralService = new ReferralService(this.dataSource, new UserRepository(this.dataSource));
+        await referralService.applyReferralRewardOnPurchase(
+          userId,
+          price,
+          "domain",
+          savedDomain.id
+        );
+      } catch (error) {
+        Logger.error("Failed to apply referral reward on domain purchase", error);
+      }
+
       return savedDomain;
     });
   }

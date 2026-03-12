@@ -48,9 +48,25 @@ export default class User {
   @Column({ nullable: true, type: "integer" })
   referrerId!: number | null;
 
-  /** Referral reward percentage (0–100). Null = use default 5%. */
+  /** Referral reward percentage for top-ups (0–100). Null = use default 5%. */
   @Column({ nullable: true, type: "real" })
   referralPercent!: number | null;
+
+  /** Referral % for domain purchases. Null = use default 5%. */
+  @Column({ nullable: true, type: "real" })
+  referralPercentDomain!: number | null;
+
+  /** Referral % for dedicated server purchases. Null = use default 5%. */
+  @Column({ nullable: true, type: "real" })
+  referralPercentDedicated!: number | null;
+
+  /** Referral % for VPS/VDS purchases. Null = use default 5%. */
+  @Column({ nullable: true, type: "real" })
+  referralPercentVds!: number | null;
+
+  /** Referral % for CDN purchases. Null = use default 5%. */
+  @Column({ nullable: true, type: "real" })
+  referralPercentCdn!: number | null;
 
   /** Prime subscription active until (null = not active). */
   @Column({ nullable: true, type: "datetime" })

@@ -16,8 +16,16 @@ export default class ReferralReward {
   @Column({ nullable: false, type: "integer" })
   refereeId!: number;
 
-  @Column({ nullable: false, type: "integer" })
-  topUpId!: number;
+  /** Source: topup | domain | dedicated | vds | cdn. Default topup for existing rows. */
+  @Column({ nullable: false, type: "varchar", length: 20, default: "topup" })
+  sourceType!: string;
+
+  /** For topup: TopUp.id. For domain/dedicated/vds/cdn: ServiceInvoice.id or domain id for idempotency. */
+  @Column({ nullable: true, type: "integer" })
+  topUpId!: number | null;
+
+  @Column({ nullable: true, type: "integer" })
+  sourceId!: number | null;
 
   @Column({ nullable: false, type: "real" })
   amount!: number;

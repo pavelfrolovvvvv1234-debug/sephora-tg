@@ -194,6 +194,23 @@ export class BundleService {
       user.balance -= pricing.finalPrice;
       await userRepo.save(user);
 
+      // 3a. Apply referral reward for bundle purchase (treat as domain purchase if domain present)
+      try {
+        if (domain) {
+          const { ReferralService } = await import("../referral/ReferralService.js");
+          const { UserRepository } = await import("../../infrastructure/db/repositories/UserRepository.js");
+          const referralService = new ReferralService(this.dataSource, new UserRepository(this.dataSource));
+          await referralService.applyReferralRewardOnPurchase(
+            userId,
+            pricing.finalPrice,
+            "domain",
+            domain.id
+          );
+        }
+      } catch (error) {
+        Logger.error("Failed to apply referral reward on bundle purchase", error);
+      }
+
       // 4. TODO: Apply bundle features (DNS setup, nginx config, firewall, etc.)
       // This would typically involve:
       // - DNS configuration via API
@@ -279,6 +296,21 @@ export class BundleService {
 
       user.balance -= domainPrice;
       await userRepo.save(user);
+
+      // Referral reward for domain-only bundle purchase
+      try {
+        const { ReferralService } = await import("../referral/ReferralService.js");
+        const { UserRepository } = await import("../../infrastructure/db/repositories/UserRepository.js");
+        const referralService = new ReferralService(this.dataSource, new UserRepository(this.dataSource));
+        await referralService.applyReferralRewardOnPurchase(
+          userId,
+          domainPrice,
+          "domain",
+          domain.id
+        );
+      } catch (error) {
+        Logger.error("Failed to apply referral reward on bundle domain-only purchase", error);
+      }
 
       Logger.info(`Bundle domain-only purchased: ${fullDomain} for user ${userId}, price: ${domainPrice}`);
       return { success: true, domain };

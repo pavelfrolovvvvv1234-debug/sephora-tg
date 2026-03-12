@@ -4,13 +4,18 @@
 quoted-balance = <blockquote>Баланс: {NUMBER($balance, minimumFractionDigits: 0, maximumFractionDigits: 0)} $</blockquote>
 strong-balance = <strong>{NUMBER($balance, style: "currency", currency: "USD", minimumFractionDigits: 0, maximumFractionDigits: 0)} $</strong>
 
-welcome = Sephora Host • Абузоустойчивая Инфраструктура
+welcome = 👋 Добро пожаловать! Это автоматический бот для покупки серверов от Sephora.
  
- Покупка и управление услугами хостинга прямо в тг боте
- 24/7 работа • Абузоустойчивость • Офшорность
- @sephora_sup
+ Почему удобно заказывать услуги через бота?
  
- {quoted-balance}
+ — Не требуется регистрация - управление происходит через удобные кнопки.
+ — Быстрая оплата через криптовалюту.
+ — Высокая анонимность и конфиденциальность благодаря размещению инфраструктуры в оффшорных юрисдикциях.
+ 
+ 💻 Поддержка: @s3phora_bot
+ 📰 Новости проекта: @sephora_news
+ 
+ 💵 Ваш баланс: {NUMBER($balance, minimumFractionDigits: 0, maximumFractionDigits: 0)} $
 
 
 about-us = Мы предоставляем надежные и высокопроизводительные услуги, VDS выделенных серверов.
@@ -58,7 +63,7 @@ button-website = Сайт
 button-support-profile = 🔔 Поддержка
 button-dior-news = Новости Sephora
 button-contact-with-client = Связаться с клиентом
-button-domains = 🌐 Абузоустойчивые домены
+button-domains = 🌐 Оффшорные домены
 button-vds = 🖥 VPS/VDS
 button-bundle-manage = 🚀 Инфраструктурный пакет
 bundle-manage-header = <strong>🚀 Инфраструктурный пакет</strong>
@@ -68,7 +73,7 @@ bundle-manage-empty = У вас пока нет услуг по пакетам
 button-dedicated-server = 🖥 Выделенные серверы
 button-balance = 💸 Баланс
 button-standard = 🛡 Стандарт
-button-bulletproof = ⚜️ Абузоустойчивый
+button-bulletproof = ⚜️ Оффшорные
 button-agree = ✅ Согласен
 update-button = 🔄 Обновить
 
@@ -204,7 +209,7 @@ moderator-menu-header = <strong>Панель модератора</strong>
 # Referrals
 button-referrals = 💲 Рефералы
 button-share-link = 📤 Поделиться ссылкой
-referrals-screen = 🚀 Партнёрская программа Sephora Host\n\nМонетизируйте свой трафик на VPS, дедиках и абузоустойчивых доменах.\n\n💰 Условия:\n\n• До 30% от каждого пополнения привлечённого клиента\n• Lifetime — процент со всех будущих оплат\n• Начисление при первом пополнении от $10+\n• Без ограничений по количеству рефералов\n• Автоматический учёт в системе\n\n🔗 Ваша реферальная ссылка:\n{$link}\n\nРефералов: {$count}\nЗаработано: {$profit} $\n\nПривлекайте трафик — получайте пассивный доход на инфраструктуре.
+referrals-screen = 🚀 Партнёрская программа Sephora Host\n\nМонетизируйте свой трафик на VPS, дедиках и оффшорных доменах.\n\n💰 Условия:\n\n• До 30% от каждого пополнения привлечённого клиента\n• Lifetime — процент со всех будущих оплат\n• Начисление при первом пополнении от $10+\n• Без ограничений по количеству рефералов\n• Автоматический учёт в системе\n\n🔗 Ваша реферальная ссылка:\n{$link}\n\nРефералов: {$count}\nЗаработано: {$profit} $\n\nПривлекайте трафик — получайте пассивный доход на инфраструктуре.
 referrals-share-text = Присоединяйся ко мне на Sephora Host! Используй мою реферальную ссылку, чтобы начать.
 
 Выберите действие:
@@ -326,8 +331,8 @@ manage-services-header = 🛠 Управление услугами
 
 vds-menu-select = Выберете интересующий вас тариф
 
-vds-bulletproof-mode-button-on = Абузоустойчивые: ВКЛ
-vds-bulletproof-mode-button-off = Абузоустойчивые: ВЫКЛ
+vds-bulletproof-mode-button-on = Оффшорные: ВКЛ
+vds-bulletproof-mode-button-off = Оффшорные: ВЫКЛ
 
 vds-rate = «{$rateName}» - {NUMBER($price, style: "currency", currency: "USD", minimumFractionDigits: 0, maximumFractionDigits: 0)} $, {$cpu} ядер, {$ram} gb озу, {$disk} gb диск
 dedicated-rate = «{$rateName}» - {NUMBER($price, style: "currency", currency: "USD", minimumFractionDigits: 0, maximumFractionDigits: 0)} $/мес, {$cpu} ядер / {$cpuThreads} потоков, {$ram} GB RAM, {$storage} GB
@@ -346,8 +351,8 @@ dedicated-rate-full-view = <strong>«{$rateName}»</strong>
 
  <strong>💰 Price: </strong> {NUMBER($price, style: "currency", currency: "USD", minimumFractionDigits: 0, maximumFractionDigits: 0)} $ / month
 
-bulletproof-on = ✅ Абузоустойчивый тариф
-bulletproof-off = ⚠️ Это не абузоустойчивый тариф
+bulletproof-on = ✅ Оффшорный тариф
+bulletproof-off = ⚠️ Это не оффшорный тариф
 unlimited = Безлимитный
 
 
@@ -739,7 +744,7 @@ RAM: {$ram} GB
 Диск: {$disk} GB
 Сеть: {$network} Mbit/s
 ОС: {$osName}
-Абузоустойчивость: {$abuse}
+Оффшорность: {$abuse}
 Тариф: {$rateName}
 Цена продления: {$price} $
 Истекает: {$expireAt}
@@ -1038,11 +1043,11 @@ bundle-pro-infrastructure = Pro Infrastructure Pack
 bundle-starter-shield-desc = Базовый пакет: домен + VPS + защита
 bundle-starter-shield-title = 🚀 Starter Shield
 bundle-starter-shield-intro = Базовый инфраструктурный пакет для быстрого запуска проекта
-bundle-starter-shield-tagline = Готовое решение: bulletproof домен + сервер + базовая защита в одном комплекте.
+bundle-starter-shield-tagline = Готовое решение: оффшорный домен + сервер + базовая защита в одном комплекте.
     Минимум ручных действий — максимум скорости запуска.
 bundle-starter-shield-includes-title = В пакет входит
-bundle-starter-shield-includes-list = ✔️ Абузоустойчивый домен
-    ✔️ Абузоустойчивый VPS
+bundle-starter-shield-includes-list = ✔️ Оффшорный домен
+    ✔️ Оффшорный VPS
     ✔️ Бесплатная настройка DNS
     ✔️ Привязка домена к VPS
     ✔️ Pre-config Firewall
@@ -1067,7 +1072,7 @@ bundle-pro-infrastructure-intro = Профессиональный стек по
 bundle-pro-infrastructure-tagline = Комплексное инфраструктурное решение: усиленный VPS, расширенная сеть и базовый мониторинг.
     Формат — готовый production-набор без донастройки вручную.
 bundle-pro-infrastructure-includes-title = В пакет входит
-bundle-pro-infrastructure-includes-list = ✔️ Абузоустойчивый домен
+bundle-pro-infrastructure-includes-list = ✔️ Оффшорный домен
     ✔️ Мощный VPS/VDS
     ✔️ Бесплатная настройка DNS
     ✔️ Привязка домена к VPS
@@ -1101,7 +1106,7 @@ bundle-period-semi-annual = 6 месяцев
 bundle-discount-12 = -12%
 bundle-discount-17 = -17%
 bundle-discount-20 = -20%
-bundle-feature-domain = Абузоустойчивый домен
+bundle-feature-domain = Оффшорный домен
 bundle-feature-vps = VPS/VDS
 bundle-feature-dns-setup = Бесплатная настройка DNS
 bundle-feature-domain-binding = Привязка домена к VPS

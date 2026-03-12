@@ -126,6 +126,7 @@ export interface OtherSessionData {
   /** Admin referral percent edit: awaiting percentage 0-100 */
   referralPercentEdit?: {
     userId: number;
+    sourceType: "topup" | "domain" | "dedicated" | "vds" | "cdn";
   };
   /** Admin domain NS edit: awaiting ns1 ns2 for domainId */
   adminDomainNs?: {

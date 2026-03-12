@@ -571,7 +571,7 @@ export const dedicatedServersMenu = new Menu<AppContext>("dedicated-servers-menu
 
     const isBulletproof = session.other.dedicatedType.bulletproof;
 
-    // Filter servers by category: standard vs bulletproof (abuse-resistant)
+    // Filter servers by category: standard vs bulletproof (offshore)
     const serverIndices: number[] = [];
     list.forEach((server: any, id) => {
       const category = server.category ?? "standard";

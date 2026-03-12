@@ -4,13 +4,18 @@
 quoted-balance = <blockquote>Balance: {NUMBER($balance, minimumFractionDigits: 0, maximumFractionDigits: 0)} $</blockquote>
 strong-balance = <strong>{NUMBER($balance, style: "currency", currency: "USD", minimumFractionDigits: 0, maximumFractionDigits: 0)} $</strong>
 
-welcome = Sephora Host • Bulletproof Infrastructure
+welcome = 👋 Welcome! This is the automated bot for purchasing servers from Sephora.
  
- Order and manage hosting services directly in this bot.
- 24/7 uptime • Bulletproof • Offshore
- @sephora_sup
+ Why is it convenient to order services through the bot?
  
- {quoted-balance}
+ — No registration required - everything is managed through simple buttons.
+ — Fast payments via cryptocurrency.
+ — High anonymity and confidentiality thanks to infrastructure located in offshore jurisdictions.
+ 
+ 💻 Support: @s3phora_bot
+ 📰 Project news: @sephora_news
+ 
+ 💵 Your balance: {NUMBER($balance, minimumFractionDigits: 0, maximumFractionDigits: 0)} $
 
 about-us = We provide reliable and high-performance VDS dedicated servers and hosting services.
 
@@ -57,7 +62,7 @@ button-website = Web Site
 button-support-profile = 🔔 Support
 button-dior-news = Sephora News
 button-contact-with-client = Contact with client
-button-domains = 🌐 Bulletproof Domains
+button-domains = 🌐 Offshore Domains
 button-vds = 🖥 VPS/VDS
 button-bundle-manage = 🚀 Infrastructure Bundle
 bundle-manage-header = <strong>🚀 Infrastructure Bundle</strong>
@@ -67,7 +72,7 @@ bundle-manage-empty = You have no bundle services yet
 button-dedicated-server = 🖥 Dedicated Servers
 button-balance = 💸 Balance
 button-standard = 🛡 Standard
-button-bulletproof = ⚜️ Bulletproof
+button-bulletproof = ⚜️ Offshore
 button-agree = ✅ Agree
 update-button = 🔄 Update
 
@@ -203,7 +208,7 @@ moderator-menu-header = <strong>Moderator Panel</strong>
 # Referrals
 button-referrals = 💲 Referrals
 button-share-link = 📤 Share link
-referrals-screen = 🚀 Sephora Host Partner Program\n\nMonetize your traffic on VPS, dedicated servers and abuse-resistant domains.\n\n💰 Terms:\n\n• Up to 30% of each referred client's top-up\n• Lifetime — percentage from all future payments\n• Credited on first top-up from $10+\n• No limit on number of referrals\n• Automatic tracking in the system\n\n🔗 Your referral link:\n{$link}\n\nReferrals: {$count}\nEarned: {$profit} $\n\nDrive traffic — earn passive income on infrastructure.
+referrals-screen = 🚀 Sephora Host Partner Program\n\nMonetize your traffic on VPS, dedicated servers and offshore domains.\n\n💰 Terms:\n\n• Up to 30% of each referred client's top-up\n• Lifetime — percentage from all future payments\n• Credited on first top-up from $10+\n• No limit on number of referrals\n• Automatic tracking in the system\n\n🔗 Your referral link:\n{$link}\n\nReferrals: {$count}\nEarned: {$profit} $\n\nDrive traffic — earn passive income on infrastructure.
 referrals-share-text = Join me on Sephora Host! Use my referral link to get started.
 
 Select an action:
@@ -329,8 +334,8 @@ manage-services-header = 🛠 Manage services
 
 vds-menu-rate-select = test
 
-vds-bulletproof-mode-button-on = Bulletproof: ON
-vds-bulletproof-mode-button-off = Bulletproof: OFF
+vds-bulletproof-mode-button-on = Offshore: ON
+vds-bulletproof-mode-button-off = Offshore: OFF
 
 vds-rate = «{$rateName}» - {NUMBER($price, style: "currency", currency: "USD", minimumFractionDigits: 0, maximumFractionDigits: 0)} $, {$cpu} cores, {$ram} gb ram, {$disk} gb disk
 dedicated-rate = «{$rateName}» - {NUMBER($price, style: "currency", currency: "USD", minimumFractionDigits: 0, maximumFractionDigits: 0)} $/mo, {$cpu} cores / {$cpuThreads} threads, {$ram} GB RAM, {$storage} GB
@@ -349,8 +354,8 @@ dedicated-rate-full-view = <strong>«{$rateName}»</strong>
 
  <strong>💰 Price: </strong> {NUMBER($price, style: "currency", currency: "USD", minimumFractionDigits: 0, maximumFractionDigits: 0)} $ / month
 
-bulletproof-on = ✅ Bulletproof rate
-bulletproof-off = ⚠️ Isn't bulletproof rate
+bulletproof-on = ✅ Offshore rate
+bulletproof-off = ⚠️ Isn't offshore rate
 unlimited = Unlimited
 
 vds-rate-full-view = <strong>«{$rateName}»</strong>
@@ -742,7 +747,7 @@ RAM: {$ram} GB
 Disk: {$disk} GB
 Network: {$network} Mbit/s
 OS: {$osName}
-Bulletproof: {$abuse}
+Offshore: {$abuse}
 Rate: {$rateName}
 Renewal Price: {$price} $
 Expires: {$expireAt}
@@ -1036,11 +1041,11 @@ bundle-pro-infrastructure = Pro Infrastructure Pack
 bundle-starter-shield-desc = Basic package: domain + VPS + protection
 bundle-starter-shield-title = 🚀 Starter Shield
 bundle-starter-shield-intro = Basic infrastructure package for quick project launch
-bundle-starter-shield-tagline = Ready solution: bulletproof domain + server + basic protection in one bundle.
+bundle-starter-shield-tagline = Ready solution: offshore domain + server + basic protection in one bundle.
     Minimum manual steps — maximum launch speed.
 bundle-starter-shield-includes-title = Package includes
-bundle-starter-shield-includes-list = ✔️ Bulletproof Domain
-    ✔️ Bulletproof VPS
+bundle-starter-shield-includes-list = ✔️ Offshore Domain
+    ✔️ Offshore VPS
     ✔️ Free DNS setup
     ✔️ Domain to VPS binding
     ✔️ Pre-config Firewall
@@ -1065,7 +1070,7 @@ bundle-pro-infrastructure-intro = Professional stack for serious projects and lo
 bundle-pro-infrastructure-tagline = Complete infrastructure solution: enhanced VPS, extended network and basic monitoring.
     Ready production bundle without manual tuning.
 bundle-pro-infrastructure-includes-title = Package includes
-bundle-pro-infrastructure-includes-list = ✔️ Bulletproof Domain
+bundle-pro-infrastructure-includes-list = ✔️ Offshore Domain
     ✔️ Powerful VPS/VDS
     ✔️ Free DNS setup
     ✔️ Domain to VPS binding
@@ -1099,7 +1104,7 @@ bundle-period-semi-annual = 6 months
 bundle-discount-12 = -12%
 bundle-discount-17 = -17%
 bundle-discount-20 = -20%
-bundle-feature-domain = Bulletproof Domain
+bundle-feature-domain = Offshore Domain
 bundle-feature-vps = VPS/VDS
 bundle-feature-dns-setup = Free DNS setup
 bundle-feature-domain-binding = Domain to VPS binding

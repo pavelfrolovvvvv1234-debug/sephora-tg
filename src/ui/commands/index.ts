@@ -61,12 +61,12 @@ export function registerCommands(bot: Bot<AppContext>): void {
     Logger.error("Failed to set bot name:", error);
   });
   bot.api
-    .setMyShortDescription("Bulletproof VPS, domains & dedicated servers — order and manage hosting in TG. 24/7.")
+    .setMyShortDescription("Offshore VPS, domains & dedicated servers — order and manage hosting in TG. 24/7.")
     .catch((error) => {
       Logger.error("Failed to set bot short description:", error);
     });
   bot.api
-    .setMyDescription("Welcome to Sephora Host!\n\nBulletproof VPS, domains and dedicated servers — order and manage hosting in TG. 24/7 support, offshore, reliable infrastructure.\n\nPress /start to begin.")
+    .setMyDescription("Welcome to Sephora Host!\n\nOffshore VPS, domains and dedicated servers — order and manage hosting in TG. 24/7 support, offshore, reliable infrastructure.\n\nPress /start to begin.")
     .catch((error) => {
       Logger.error("Failed to set bot description:", error);
     });

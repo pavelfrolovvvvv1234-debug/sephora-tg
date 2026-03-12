@@ -12,6 +12,11 @@ import { NotFoundError, BusinessError } from "../../shared/errors/index.js";
 import { Logger } from "../../app/logger.js";
 import { config } from "../../app/config.js";
 
+/** Source of referral reward: top-up or purchase by service type. */
+export type ReferralSourceType = "topup" | "domain" | "dedicated" | "vds" | "cdn";
+
+const DEFAULT_REFERRAL_PERCENT = 5;
+
 /**
  * Referral service for managing referrals and rewards.
  */
@@ -142,6 +147,26 @@ export class ReferralService {
   }
 
   /**
+   * Get referral percentage for a given source type (referrer's custom or default 5%).
+   */
+  getReferralPercent(referrer: User, sourceType: ReferralSourceType): number {
+    switch (sourceType) {
+      case "topup":
+        return referrer.referralPercent != null ? referrer.referralPercent : DEFAULT_REFERRAL_PERCENT;
+      case "domain":
+        return referrer.referralPercentDomain != null ? referrer.referralPercentDomain : DEFAULT_REFERRAL_PERCENT;
+      case "dedicated":
+        return referrer.referralPercentDedicated != null ? referrer.referralPercentDedicated : DEFAULT_REFERRAL_PERCENT;
+      case "vds":
+        return referrer.referralPercentVds != null ? referrer.referralPercentVds : DEFAULT_REFERRAL_PERCENT;
+      case "cdn":
+        return referrer.referralPercentCdn != null ? referrer.referralPercentCdn : DEFAULT_REFERRAL_PERCENT;
+      default:
+        return DEFAULT_REFERRAL_PERCENT;
+    }
+  }
+
+  /**
    * Apply referral reward on successful top-up (atomic transaction).
    * Validates:
    * - Amount > 10
@@ -170,9 +195,9 @@ export class ReferralService {
       const userRepo = manager.getRepository(User);
       const rewardRepo = manager.getRepository(ReferralReward);
 
-      // Check if reward already applied (using findOne with where clause)
+      // Check if reward already applied (idempotency by topup)
       const existingReward = await rewardRepo.findOne({
-        where: { topUpId: topUpId },
+        where: { sourceType: "topup", topUpId: topUpId },
       });
 
       if (existingReward) {
@@ -209,19 +234,18 @@ export class ReferralService {
         return 0;
       }
 
-      // Calculate reward: referrer's percentage or default 5%
-      const percent = referrer.referralPercent != null ? referrer.referralPercent : 5;
+      const percent = this.getReferralPercent(referrer, "topup");
       const rewardAmount = Math.round((amount * (percent / 100)) * 100) / 100;
 
-      // Add to referral balance (for withdrawal), not to purchase balance
       referrer.referralBalance = (referrer.referralBalance ?? 0) + rewardAmount;
       await userRepo.save(referrer);
 
-      // Create reward record
       const reward = new ReferralReward();
       reward.referrerId = referrer.id;
       reward.refereeId = referee.id;
+      reward.sourceType = "topup";
       reward.topUpId = topUpId;
+      reward.sourceId = null;
       reward.amount = amount;
       reward.rewardAmount = rewardAmount;
       await rewardRepo.save(reward);
@@ -230,6 +254,79 @@ export class ReferralService {
         `Applied referral reward: ${rewardAmount} to referrer ${referrer.id} for topUp ${topUpId} (amount: ${amount})`
       );
 
+      return rewardAmount;
+    });
+  }
+
+  /**
+   * Apply referral reward on service purchase (domain, dedicated, vds, cdn).
+   * Idempotent: no duplicate reward for same sourceType + sourceId.
+   *
+   * @param refereeId - User who paid
+   * @param amount - Purchase amount
+   * @param sourceType - domain | dedicated | vds | cdn
+   * @param sourceId - Unique id (e.g. ServiceInvoice.id or domain id) for idempotency
+   * @returns Reward amount if applied, 0 otherwise
+   */
+  async applyReferralRewardOnPurchase(
+    refereeId: number,
+    amount: number,
+    sourceType: ReferralSourceType,
+    sourceId: number
+  ): Promise<number> {
+    if (sourceType === "topup") {
+      Logger.warn("applyReferralRewardOnPurchase called with sourceType=topup, use applyReferralRewardOnTopup");
+      return 0;
+    }
+    if (amount <= 0) {
+      return 0;
+    }
+
+    return await this.dataSource.transaction(async (manager) => {
+      const userRepo = manager.getRepository(User);
+      const rewardRepo = manager.getRepository(ReferralReward);
+
+      const existing = await rewardRepo.findOne({
+        where: { sourceType, sourceId },
+      });
+      if (existing) {
+        Logger.info(`Referral reward already applied for ${sourceType}:${sourceId}, skipping`);
+        return 0;
+      }
+
+      const referee = await userRepo.findOne({ where: { id: refereeId } });
+      if (!referee) throw new NotFoundError("User", refereeId);
+      if (!referee.referrerId) {
+        Logger.debug(`User ${refereeId} has no referrer, skipping purchase reward`);
+        return 0;
+      }
+
+      const referrer = await userRepo.findOne({ where: { id: referee.referrerId } });
+      if (!referrer) {
+        Logger.warn(`Referrer ${referee.referrerId} not found for referee ${refereeId}`);
+        return 0;
+      }
+
+      const percent = this.getReferralPercent(referrer, sourceType);
+      const rewardAmount = Math.round((amount * (percent / 100)) * 100) / 100;
+      if (rewardAmount <= 0) return 0;
+
+      referrer.referralBalance = (referrer.referralBalance ?? 0) + rewardAmount;
+      await userRepo.save(referrer);
+
+      const reward = new ReferralReward();
+      reward.referrerId = referrer.id;
+      reward.refereeId = referee.id;
+      reward.sourceType = sourceType;
+      reward.topUpId = null;
+      reward.sourceId = sourceId;
+      reward.amount = amount;
+      reward.rewardAmount = rewardAmount;
+      await rewardRepo.save(reward);
+
+      Logger.info(
+        `Applied referral reward: ${rewardAmount} to referrer ${referrer.id} for ${sourceType} ${sourceId} (amount: ${amount})`
+      );
       return rewardAmount;
     });
   }

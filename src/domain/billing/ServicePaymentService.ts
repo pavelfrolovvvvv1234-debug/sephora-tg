@@ -126,6 +126,28 @@ export class ServicePaymentService {
 
     await this.applyServicePayment(invoice);
 
+    // Referral reward for VDS/dedicated purchase (after payment applied, avoid deadlocks)
+    try {
+      const { ReferralService } = await import("../referral/ReferralService.js");
+      const { UserRepository } = await import("../../infrastructure/db/repositories/UserRepository.js");
+      const referralService = new ReferralService(
+        this.dataSource,
+        new UserRepository(this.dataSource)
+      );
+      const sourceType = invoice.serviceType === "vds" ? "vds" : "dedicated";
+      const rewardAmount = await referralService.applyReferralRewardOnPurchase(
+        invoice.userId,
+        invoice.amount,
+        sourceType,
+        invoice.id
+      );
+      if (rewardAmount > 0) {
+        Logger.info(`Referral reward ${rewardAmount} for service invoice ${invoice.id} (${sourceType})`);
+      }
+    } catch (err: unknown) {
+      Logger.error("Failed to apply referral reward on service payment", err);
+    }
+
     return invoice;
   }
 

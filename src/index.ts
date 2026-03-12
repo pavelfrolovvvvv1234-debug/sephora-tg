@@ -440,10 +440,10 @@ async function index() {
           id: `sephora-welcome-${queryId}`,
           title: "🛡️ Welcome to Sephora Host!",
           description:
-            "Bulletproof VPS, domains & dedicated servers — order and manage hosting in TG. 24/7, offshore.",
+            "Offshore VPS, domains & dedicated servers — order and manage hosting in TG. 24/7, offshore.",
           input_message_content: {
             message_text:
-              "✨ Welcome to Sephora Host!\n\nBulletproof VPS, domains and dedicated servers — order and manage hosting in TG. 24/7 support, offshore.\n\n👉 Open bot: t.me/sephorahost_bot",
+              "✨ Welcome to Sephora Host!\n\nOffshore VPS, domains and dedicated servers — order and manage hosting in TG. 24/7 support, offshore.\n\n👉 Open bot: t.me/sephorahost_bot",
           },
         },
       ];
@@ -1196,14 +1196,29 @@ async function index() {
     await ctx.editMessageText(text, { parse_mode: "HTML", reply_markup }).catch(() => {});
   });
 
-  bot.callbackQuery("admin-referrals-change-percent", async (ctx) => {
-    await ctx.answerCallbackQuery().catch(() => {});
-    const session = (await ctx.session) as SessionData;
-    if (!session.other.controlUsersPage?.pickedUserData) return;
-    if (session.main.user.role !== Role.Admin && session.main.user.role !== Role.Moderator) return;
-    session.other.referralPercentEdit = { userId: session.other.controlUsersPage.pickedUserData.id };
-    await ctx.reply(ctx.t("admin-referral-percent-enter"), { parse_mode: "HTML" });
-  });
+  function registerReferralPercentHandler(
+    bot: typeof import("grammy").Bot.prototype,
+    sourceType: "topup" | "domain" | "dedicated" | "vds" | "cdn",
+    callbackData: string
+  ) {
+    bot.callbackQuery(callbackData, async (ctx) => {
+      await ctx.answerCallbackQuery().catch(() => {});
+      const session = (await ctx.session) as SessionData;
+      if (!session.other.controlUsersPage?.pickedUserData) return;
+      if (session.main.user.role !== Role.Admin && session.main.user.role !== Role.Moderator) return;
+      session.other.referralPercentEdit = {
+        userId: session.other.controlUsersPage.pickedUserData.id,
+        sourceType,
+      };
+      await ctx.reply(ctx.t("admin-referral-percent-enter"), { parse_mode: "HTML" });
+    });
+  }
+
+  registerReferralPercentHandler(bot, "topup", "admin-referrals-change-percent-topup");
+  registerReferralPercentHandler(bot, "domain", "admin-referrals-change-percent-domain");
+  registerReferralPercentHandler(bot, "vds", "admin-referrals-change-percent-vds");
+  registerReferralPercentHandler(bot, "dedicated", "admin-referrals-change-percent-dedicated");
+  registerReferralPercentHandler(bot, "cdn", "admin-referrals-change-percent-cdn");
 
   bot.callbackQuery(/^admin-user-services-domains-(\d+)$/, async (ctx) => {
     await ctx.answerCallbackQuery().catch(() => {});
@@ -1466,11 +1481,28 @@ async function index() {
         await ctx.reply(ctx.t("error-user-not-found"), { parse_mode: "HTML" });
         return;
       }
-      targetUser.referralPercent = Math.round(value * 100) / 100;
+      const percentValue = Math.round(value * 100) / 100;
+      switch (referralPercentEdit.sourceType) {
+        case "topup":
+          targetUser.referralPercent = percentValue;
+          break;
+        case "domain":
+          targetUser.referralPercentDomain = percentValue;
+          break;
+        case "vds":
+          targetUser.referralPercentVds = percentValue;
+          break;
+        case "dedicated":
+          targetUser.referralPercentDedicated = percentValue;
+          break;
+        case "cdn":
+          targetUser.referralPercentCdn = percentValue;
+          break;
+      }
       await ctx.appDataSource.manager.save(targetUser);
       delete session.other.referralPercentEdit;
       await ctx.reply(
-        ctx.t("admin-referral-percent-success", { percent: targetUser.referralPercent }),
+        ctx.t("admin-referral-percent-success", { percent: percentValue }),
         { parse_mode: "HTML" }
       );
       return;

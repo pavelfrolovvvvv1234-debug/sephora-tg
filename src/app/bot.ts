@@ -94,10 +94,10 @@ export async function createBot(): Promise<{
           id: `sephora-welcome-${queryId}`,
           title: "🛡️ Welcome to Sephora Host!",
           description:
-            "Bulletproof VPS, domains & dedicated servers — order and manage hosting in TG. 24/7, offshore.",
+            "Offshore VPS, domains & dedicated servers — order and manage hosting in TG. 24/7, offshore.",
           input_message_content: {
             message_text:
-              "✨ Welcome to Sephora Host!\n\nBulletproof VPS, domains and dedicated servers — order and manage hosting in TG. 24/7 support, offshore.\n\n👉 Open bot: t.me/sephorahost_bot",
+              "✨ Welcome to Sephora Host!\n\nOffshore VPS, domains and dedicated servers — order and manage hosting in TG. 24/7 support, offshore.\n\n👉 Open bot: t.me/sephorahost_bot",
           },
         },
       ];

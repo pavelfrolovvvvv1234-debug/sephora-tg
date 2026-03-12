@@ -417,7 +417,13 @@ export const controlUser = new Menu<AppContext>("control-user", {})
           activeReferrals30d = Number(active30Result?.cnt ?? 0);
         }
         const referralKeyboard = new InlineKeyboard()
-          .text(ctx.t("button-change-percent"), "admin-referrals-change-percent")
+          .text("⚡ Top-up %", "admin-referrals-change-percent-topup")
+          .row()
+          .text("🌐 Domains %", "admin-referrals-change-percent-domain")
+          .text("🖥 VDS %", "admin-referrals-change-percent-vds")
+          .row()
+          .text("🖥 Dedicated %", "admin-referrals-change-percent-dedicated")
+          .text("☁ CDN %", "admin-referrals-change-percent-cdn")
           .row()
           .text(ctx.t("button-back"), "admin-referrals-back");
         const referralPercent = user.referralPercent != null ? user.referralPercent : 5;
