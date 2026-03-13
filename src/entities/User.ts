@@ -60,9 +60,25 @@ export default class User {
   @Column({ nullable: true, type: "real" })
   referralPercentDedicated!: number | null;
 
+  /** Referral % for dedicated Standard. Null = use referralPercentDedicated or 5%. */
+  @Column({ nullable: true, type: "real" })
+  referralPercentDedicatedStandard!: number | null;
+
+  /** Referral % for dedicated Offshore (abuse-resistant). Null = use referralPercentDedicated or 5%. */
+  @Column({ nullable: true, type: "real" })
+  referralPercentDedicatedOffshore!: number | null;
+
   /** Referral % for VPS/VDS purchases. Null = use default 5%. */
   @Column({ nullable: true, type: "real" })
   referralPercentVds!: number | null;
+
+  /** Referral % for VDS Standard. Null = use referralPercentVds or 5%. */
+  @Column({ nullable: true, type: "real" })
+  referralPercentVdsStandard!: number | null;
+
+  /** Referral % for VDS Offshore (abuse-resistant). Null = use referralPercentVds or 5%. */
+  @Column({ nullable: true, type: "real" })
+  referralPercentVdsOffshore!: number | null;
 
   /** Referral % for CDN purchases. Null = use default 5%. */
   @Column({ nullable: true, type: "real" })

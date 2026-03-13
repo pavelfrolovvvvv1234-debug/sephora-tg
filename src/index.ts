@@ -24,7 +24,7 @@ import {
   PREFIX_PROMOTE,
   promotePermissions,
 } from "./helpers/promote-permissions";
-import { buildControlPanelUserReply, controlUser, controlUserBalance, controlUsers, controlUserStatus, controlUserSubscription } from "./helpers/users-control";
+import { buildControlPanelUserReply, buildReferralSummaryMessage, controlUser, controlUserBalance, controlUsers, controlUserStatus, controlUserSubscription } from "./helpers/users-control";
 import express from "express";
 import { run as grammyRun } from "@grammyjs/runner";
 import { adminMenu } from "./ui/menus/admin-menu";
@@ -90,6 +90,7 @@ import Domain, { DomainStatus } from "./entities/Domain";
 import DedicatedServer, { DedicatedServerStatus } from "./entities/DedicatedServer";
 import TopUp, { TopUpStatus } from "./entities/TopUp";
 import Ticket, { TicketType } from "./entities/Ticket";
+import { TicketService } from "./domain/tickets/TicketService";
 import Promo from "./entities/Promo";
 import { handlePromocodeInput, promocodeQuestion } from "./helpers/promocode-input";
 import { registerDomainRegistrationMiddleware } from "./helpers/domain-registraton";
@@ -1100,6 +1101,31 @@ async function index() {
     await handleBundleConfirmPurchase(ctx as AppContext);
   });
 
+  bot.callbackQuery("software-dev-discuss", async (ctx) => {
+    await ctx.answerCallbackQuery().catch(() => {});
+    const session = (await ctx.session) as SessionData;
+    session.other.softwareDevRequest = { awaitingTz: true };
+    await ctx.reply(ctx.t("software-dev-enter-tz"), { parse_mode: "HTML" });
+  });
+
+  bot.callbackQuery("software-dev-back", async (ctx) => {
+    await ctx.answerCallbackQuery().catch(() => {});
+    const { servicesMenu } = await import("./helpers/services-menu.js");
+    await ctx.editMessageText(ctx.t("menu-service-for-buy-choose"), {
+      reply_markup: servicesMenu,
+      parse_mode: "HTML",
+    });
+  });
+
+  bot.callbackQuery("partner-integration-back", async (ctx) => {
+    await ctx.answerCallbackQuery().catch(() => {});
+    const { servicesMenu } = await import("./helpers/services-menu.js");
+    await ctx.editMessageText(ctx.t("menu-service-for-buy-choose"), {
+      reply_markup: servicesMenu,
+      parse_mode: "HTML",
+    });
+  });
+
   bot.callbackQuery("domain-register-cancel", async (ctx) => {
     await ctx.answerCallbackQuery().catch(() => {});
     if (ctx.callbackQuery.message) {
@@ -1196,9 +1222,10 @@ async function index() {
     await ctx.editMessageText(text, { parse_mode: "HTML", reply_markup }).catch(() => {});
   });
 
+  type ReferralPercentSourceType = "topup" | "domain" | "dedicated" | "dedicated_standard" | "dedicated_offshore" | "vds" | "vds_standard" | "vds_offshore" | "cdn";
   function registerReferralPercentHandler(
     bot: typeof import("grammy").Bot.prototype,
-    sourceType: "topup" | "domain" | "dedicated" | "vds" | "cdn",
+    sourceType: ReferralPercentSourceType,
     callbackData: string
   ) {
     bot.callbackQuery(callbackData, async (ctx) => {
@@ -1216,9 +1243,41 @@ async function index() {
 
   registerReferralPercentHandler(bot, "topup", "admin-referrals-change-percent-topup");
   registerReferralPercentHandler(bot, "domain", "admin-referrals-change-percent-domain");
-  registerReferralPercentHandler(bot, "vds", "admin-referrals-change-percent-vds");
-  registerReferralPercentHandler(bot, "dedicated", "admin-referrals-change-percent-dedicated");
+  registerReferralPercentHandler(bot, "vds_standard", "admin-referrals-change-percent-vds-standard");
+  registerReferralPercentHandler(bot, "vds_offshore", "admin-referrals-change-percent-vds-offshore");
+  registerReferralPercentHandler(bot, "dedicated_standard", "admin-referrals-change-percent-dedicated-standard");
+  registerReferralPercentHandler(bot, "dedicated_offshore", "admin-referrals-change-percent-dedicated-offshore");
   registerReferralPercentHandler(bot, "cdn", "admin-referrals-change-percent-cdn");
+
+  bot.callbackQuery("admin-referrals-vds-menu", async (ctx) => {
+    await ctx.answerCallbackQuery().catch(() => {});
+    const submenu = new InlineKeyboard()
+      .text("🖥 VDS Standard %", "admin-referrals-change-percent-vds-standard")
+      .text("🖥 VDS Offshore %", "admin-referrals-change-percent-vds-offshore")
+      .row()
+      .text(ctx.t("button-back"), "admin-referrals-back-to-summary");
+    await ctx.editMessageText(ctx.t("admin-referrals-vds-menu-title"), { parse_mode: "HTML", reply_markup: submenu }).catch(() => {});
+  });
+
+  bot.callbackQuery("admin-referrals-dedicated-menu", async (ctx) => {
+    await ctx.answerCallbackQuery().catch(() => {});
+    const submenu = new InlineKeyboard()
+      .text("🖥 Dedicated Standard %", "admin-referrals-change-percent-dedicated-standard")
+      .text("🖥 Dedicated Offshore %", "admin-referrals-change-percent-dedicated-offshore")
+      .row()
+      .text(ctx.t("button-back"), "admin-referrals-back-to-summary");
+    await ctx.editMessageText(ctx.t("admin-referrals-dedicated-menu-title"), { parse_mode: "HTML", reply_markup: submenu }).catch(() => {});
+  });
+
+  bot.callbackQuery("admin-referrals-back-to-summary", async (ctx) => {
+    await ctx.answerCallbackQuery().catch(() => {});
+    const session = (await ctx.session) as SessionData;
+    if (!session.other.controlUsersPage?.pickedUserData) return;
+    const user = await ctx.appDataSource.manager.findOne(User, { where: { id: session.other.controlUsersPage.pickedUserData.id } });
+    if (!user) return;
+    const { text, reply_markup } = await buildReferralSummaryMessage(ctx, user);
+    await ctx.editMessageText(text, { parse_mode: "HTML", reply_markup }).catch(() => {});
+  });
 
   bot.callbackQuery(/^admin-user-services-domains-(\d+)$/, async (ctx) => {
     await ctx.answerCallbackQuery().catch(() => {});
@@ -1364,6 +1423,23 @@ async function index() {
       if (consumed) return;
     }
 
+    // Software dev: user sent TZ after "Обсудить проект"
+    const softwareDev = session.other.softwareDevRequest;
+    if (softwareDev?.awaitingTz && ctx.message?.text) {
+      const text = ctx.message.text.trim();
+      if (text.startsWith("/")) {
+        return next();
+      }
+      const dataSource = ctx.appDataSource ?? (await getAppDataSource());
+      const ticketService = new TicketService(dataSource);
+      await ticketService.createTicket(session.main.user.id, TicketType.SOFTWARE_DEV_REQUEST, {
+        description: text.slice(0, 10000),
+      });
+      delete session.other.softwareDevRequest;
+      await ctx.reply(ctx.t("software-dev-request-sent"), { parse_mode: "HTML" });
+      return;
+    }
+
     const balanceEdit = session.other.balanceEdit;
     if (balanceEdit) {
       if (!ctx.hasChatType("private")) {
@@ -1492,8 +1568,20 @@ async function index() {
         case "vds":
           targetUser.referralPercentVds = percentValue;
           break;
+        case "vds_standard":
+          targetUser.referralPercentVdsStandard = percentValue;
+          break;
+        case "vds_offshore":
+          targetUser.referralPercentVdsOffshore = percentValue;
+          break;
         case "dedicated":
           targetUser.referralPercentDedicated = percentValue;
+          break;
+        case "dedicated_standard":
+          targetUser.referralPercentDedicatedStandard = percentValue;
+          break;
+        case "dedicated_offshore":
+          targetUser.referralPercentDedicatedOffshore = percentValue;
           break;
         case "cdn":
           targetUser.referralPercentCdn = percentValue;

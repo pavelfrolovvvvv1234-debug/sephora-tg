@@ -126,7 +126,7 @@ export interface OtherSessionData {
   /** Admin referral percent edit: awaiting percentage 0-100 */
   referralPercentEdit?: {
     userId: number;
-    sourceType: "topup" | "domain" | "dedicated" | "vds" | "cdn";
+    sourceType: "topup" | "domain" | "dedicated" | "dedicated_standard" | "dedicated_offshore" | "vds" | "vds_standard" | "vds_offshore" | "cdn";
   };
   /** Admin domain NS edit: awaiting ns1 ns2 for domainId */
   adminDomainNs?: {
@@ -144,6 +144,10 @@ export interface OtherSessionData {
   withdrawStart?: {
     awaitingAmount: true;
     maxBalance: number;
+  };
+  /** Software dev: user clicked "Обсудить проект", waiting for TZ description */
+  softwareDevRequest?: {
+    awaitingTz: true;
   };
   /** Withdraw: amount passed from message handler into conversation */
   withdrawInitialAmount?: number;

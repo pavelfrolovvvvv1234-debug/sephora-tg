@@ -13,7 +13,16 @@ import { Logger } from "../../app/logger.js";
 import { config } from "../../app/config.js";
 
 /** Source of referral reward: top-up or purchase by service type. */
-export type ReferralSourceType = "topup" | "domain" | "dedicated" | "vds" | "cdn";
+export type ReferralSourceType =
+  | "topup"
+  | "domain"
+  | "dedicated"
+  | "dedicated_standard"
+  | "dedicated_offshore"
+  | "vds"
+  | "vds_standard"
+  | "vds_offshore"
+  | "cdn";
 
 const DEFAULT_REFERRAL_PERCENT = 5;
 
@@ -156,9 +165,23 @@ export class ReferralService {
       case "domain":
         return referrer.referralPercentDomain != null ? referrer.referralPercentDomain : DEFAULT_REFERRAL_PERCENT;
       case "dedicated":
-        return referrer.referralPercentDedicated != null ? referrer.referralPercentDedicated : DEFAULT_REFERRAL_PERCENT;
+      case "dedicated_standard":
+        return referrer.referralPercentDedicatedStandard != null
+          ? referrer.referralPercentDedicatedStandard
+          : (referrer.referralPercentDedicated != null ? referrer.referralPercentDedicated : DEFAULT_REFERRAL_PERCENT);
+      case "dedicated_offshore":
+        return referrer.referralPercentDedicatedOffshore != null
+          ? referrer.referralPercentDedicatedOffshore
+          : (referrer.referralPercentDedicated != null ? referrer.referralPercentDedicated : DEFAULT_REFERRAL_PERCENT);
       case "vds":
-        return referrer.referralPercentVds != null ? referrer.referralPercentVds : DEFAULT_REFERRAL_PERCENT;
+      case "vds_standard":
+        return referrer.referralPercentVdsStandard != null
+          ? referrer.referralPercentVdsStandard
+          : (referrer.referralPercentVds != null ? referrer.referralPercentVds : DEFAULT_REFERRAL_PERCENT);
+      case "vds_offshore":
+        return referrer.referralPercentVdsOffshore != null
+          ? referrer.referralPercentVdsOffshore
+          : (referrer.referralPercentVds != null ? referrer.referralPercentVds : DEFAULT_REFERRAL_PERCENT);
       case "cdn":
         return referrer.referralPercentCdn != null ? referrer.referralPercentCdn : DEFAULT_REFERRAL_PERCENT;
       default:

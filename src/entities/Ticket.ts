@@ -25,6 +25,7 @@ export enum TicketType {
   DEDICATED_OTHER = "dedicated_other",
   MANUAL_TOPUP = "manual_topup",
   WITHDRAW_REQUEST = "withdraw_request",
+  SOFTWARE_DEV_REQUEST = "software_dev_request",
 }
 
 /**

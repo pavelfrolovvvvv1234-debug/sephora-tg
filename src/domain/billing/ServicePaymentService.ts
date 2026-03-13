@@ -126,7 +126,7 @@ export class ServicePaymentService {
 
     await this.applyServicePayment(invoice);
 
-    // Referral reward for VDS/dedicated purchase (after payment applied, avoid deadlocks)
+    // Referral reward for VDS/dedicated (standard vs offshore by isBulletproof)
     try {
       const { ReferralService } = await import("../referral/ReferralService.js");
       const { UserRepository } = await import("../../infrastructure/db/repositories/UserRepository.js");
@@ -134,7 +134,14 @@ export class ServicePaymentService {
         this.dataSource,
         new UserRepository(this.dataSource)
       );
-      const sourceType = invoice.serviceType === "vds" ? "vds" : "dedicated";
+      let sourceType: "vds_standard" | "vds_offshore" | "dedicated_standard" | "dedicated_offshore";
+      if (invoice.serviceType === "vds") {
+        const vds = await this.dataSource.getRepository(VirtualDedicatedServer).findOne({ where: { id: invoice.serviceId } });
+        sourceType = vds?.isBulletproof ? "vds_offshore" : "vds_standard";
+      } else {
+        // DedicatedServer entity has no category; use standard. Add category column later to distinguish offshore.
+        sourceType = "dedicated_standard";
+      }
       const rewardAmount = await referralService.applyReferralRewardOnPurchase(
         invoice.userId,
         invoice.amount,

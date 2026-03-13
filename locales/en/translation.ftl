@@ -70,6 +70,10 @@ bundle-manage-header = <strong>🚀 Infrastructure Bundle</strong>
     Services purchased as a bundle (domain + VPS):
 bundle-manage-empty = You have no bundle services yet
 button-dedicated-server = 🖥 Dedicated Servers
+button-software-dev = 💻 Software Development
+button-software-dev-discuss = 💬 Discuss project
+button-partner-integration = 💱 Instant Crypto Exchange
+button-partner-exchange-bot = 💱 Open exchange bot
 button-balance = 💸 Balance
 button-standard = 🛡 Standard
 button-bulletproof = ⚜️ Offshore
@@ -170,8 +174,8 @@ admin-user-level-user = User
 admin-user-level-admin = Admin
 admin-date-format = {DATETIME($date, dateStyle: "medium", timeStyle: "short")}
 
-sorting-by-balance = Sorting by: {-balance}
-sorting-by-id = Sorting by: {-id}
+sorting-by-balance = Sorting by: Balance
+sorting-by-id = Sorting by: ID
 
 sort-asc = 🔽
 sort-desc = 🔼
@@ -518,7 +522,7 @@ error-ticket-already-taken = Ticket already taken
 ticket-ask-user-enter-question = Enter the question for the user:
 ticket-question-from-moderator = <strong>Question from moderator</strong>
 
-Ticket #{ticketId}
+Ticket {$ticketId}
 
 {$question}
 ticket-question-sent = Question sent to user
@@ -529,21 +533,21 @@ ticket-provide-panel-optional = Enter panel URL (optional, press /skip to skip):
 ticket-provide-notes-optional = Enter notes (optional, press /skip to skip):
 ticket-provide-result-text = Enter result text:
 ticket-result-provided = Result provided
-ticket-result-received = <strong>Ticket #{ticketId} resolved</strong>
+ticket-result-received = <strong>Ticket {$ticketId} resolved</strong>
 
 {$result}
 ticket-reject-enter-reason-optional = Enter rejection reason (optional):
-ticket-rejected = <strong>Ticket #{ticketId} rejected</strong>
+ticket-rejected = <strong>Ticket {$ticketId} rejected</strong>
 
 Reason: {$reason}
 ticket-rejected-by-moderator = Ticket rejected
-ticket-new-notification = <strong>New Ticket #{ticketId}</strong>
+ticket-new-notification = <strong>New Ticket {$ticketId}</strong>
 
 User: <a href="tg://user?id={$userId}">@{$username}</a> ({$userId})
 Type: {$type}
 ticket-moderator-notification = <strong>You received a ticket</strong>
 
-Ticket #{ticketId}
+Ticket {$ticketId}
 Type: {$type}
 User: <a href="tg://user?id={$userId}">@{$username}</a> ({$userId})
 {$amountLine}
@@ -556,6 +560,7 @@ ticket-type-dedicated_power_on = Power On
 ticket-type-dedicated_power_off = Power Off
 ticket-type-dedicated_other = Other Request
 ticket-type-manual_topup = Manual Top-up
+ticket-type-software_dev_request = 💻 Software development request
 ticket-request-what = What needs to be done
 ticket-request-server = Server
 
@@ -566,7 +571,7 @@ button-my-tickets = 🎫 My Requests
 dedicated-none = You don't have any dedicated servers
 dedicated-status-requested = <strong>Dedicated Server Request</strong>
 
-Ticket #{ticketId}
+Ticket {$ticketId}
 Status: {$status}
 
 Please wait for moderator to process your request.
@@ -593,11 +598,11 @@ dedicated-order-enter-requirements = Enter your requirements (CPU/RAM/SSD/Locati
 dedicated-order-enter-comment-optional = Enter additional comment (optional, press /skip to skip):
 dedicated-order-created = <strong>Request sent to moderator</strong>
 
-Ticket #{ticketId}
+Ticket {$ticketId}
 Status: {$status}
 dedicated-order-success = <strong>Purchase completed successfully</strong>
 
-Ticket #{ticketId}
+Ticket {$ticketId}
 
 If you need help, contact support.
 dedicated-purchase-success = <strong>Your purchase was successful</strong>
@@ -609,12 +614,12 @@ dedicated-operation-requested = <strong>Request sent to support</strong>
  Ticket #{$ticketId}. Please wait for moderator response.
 
 Operation: {$operation}
-Ticket #{ticketId}
+Ticket {$ticketId}
 tickets-none-user = You don't have any tickets
 tickets-list-user = <strong>My Tickets ({$count})</strong>
 ticket-dedicated-ready = <strong>Your Dedicated Server is Ready!</strong>
 
-Ticket #{ticketId}
+Ticket {$ticketId}
 
 <strong>IP:</strong> {$ip}
 <strong>Login:</strong> {$login}
@@ -707,16 +712,16 @@ Confirm withdrawal:
 withdraw-cancelled = Withdrawal cancelled
 withdraw-request-created = <strong>Withdrawal Request Created</strong>
 
-Ticket #{ticketId}
+Ticket {$ticketId}
 
 A moderator will process your request shortly.
-withdraw-new-notification = <strong>New Withdrawal Request #{ticketId}</strong>
+withdraw-new-notification = <strong>New Withdrawal Request {$ticketId}</strong>
 
 User: <a href="tg://user?id={$userId}">@{$username}</a> ({$userId})
 Amount: {$amount} $
 withdraw-approved = <strong>Withdrawal Request Approved</strong>
 
-Ticket #{ticketId}
+Ticket {$ticketId}
 Amount: {$amount} $
 
 Funds have been deducted from your balance.
@@ -897,6 +902,8 @@ admin-subscription-granted = Subscription granted for {$days} days until {$until
 admin-subscription-revoked = Subscription revoked.
 admin-subscription-invalid-days = Invalid number. Enter days from 1 to 3650.
 admin-referral-percent-enter = Enter referral percentage for this user (0–100):
+admin-referrals-vds-menu-title = Choose VDS type for referral percentage:
+admin-referrals-dedicated-menu-title = Choose Dedicated type for referral percentage:
 admin-referral-percent-invalid = Invalid value. Enter a number from 0 to 100.
 admin-referral-percent-success = Referral percentage set to {$percent}%.
 button-block-short = ⛔ Block

@@ -1041,6 +1041,7 @@ export function registerBroadcastAndTickets(bot: Bot<AppContext>): void {
         payload = { raw: ticket.payload || "" };
       }
       const ticketTextCandidate =
+        payload.description ||
         payload.text ||
         payload.message ||
         payload.comment ||

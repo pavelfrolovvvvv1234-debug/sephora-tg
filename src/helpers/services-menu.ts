@@ -152,6 +152,37 @@ export const servicesMenu = new Menu<AppContext>("services-menu")
     }
   )
   .row()
+  .text(
+    (ctx) => ctx.t("button-software-dev"),
+    async (ctx) => {
+      await ctx.answerCallbackQuery().catch(() => {});
+      const supportUrl = "https://t.me/sephora_sup";
+      const kb = new InlineKeyboard()
+        .url(ctx.t("button-software-dev-discuss"), supportUrl)
+        .row()
+        .text(ctx.t("button-back"), "software-dev-back");
+      await ctx.editMessageText(ctx.t("software-dev-service"), {
+        parse_mode: "HTML",
+        reply_markup: kb,
+      });
+    }
+  )
+  .row()
+  .text(
+    (ctx) => ctx.t("button-partner-integration"),
+    async (ctx) => {
+      await ctx.answerCallbackQuery().catch(() => {});
+      const kb = new InlineKeyboard()
+        .url(ctx.t("button-partner-exchange-bot"), "https://t.me/sofiuexchange_bot")
+        .row()
+        .text(ctx.t("button-back"), "partner-integration-back");
+      await ctx.editMessageText(ctx.t("partner-integration-service"), {
+        parse_mode: "HTML",
+        reply_markup: kb,
+      });
+    }
+  )
+  .row()
   .back(
     (ctx) => ctx.t("button-back"),
     async (ctx) => {

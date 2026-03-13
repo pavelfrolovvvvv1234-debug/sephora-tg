@@ -104,6 +104,77 @@ async function getQuickUserStats(
   };
 }
 
+/** Build referral summary text and keyboard (VDS/Dedicated open submenus). Used from admin panel and from back-to-summary. */
+export async function buildReferralSummaryMessage(
+  ctx: AppContext,
+  user: User
+): Promise<{ text: string; reply_markup: InlineKeyboard }> {
+  const referralService = new ReferralService(ctx.appDataSource, new UserRepository(ctx.appDataSource));
+  const link = await referralService.getReferralLink(user.id);
+  const count = await referralService.countReferrals(user.id);
+  const referees = await ctx.appDataSource.manager.find(User, {
+    where: { referrerId: user.id },
+    select: ["id"],
+  });
+  const refereeIds = referees.map((r) => r.id);
+  let conversionPercent = 0;
+  let avgDepositPerReferral = 0;
+  let activeReferrals30d = 0;
+  if (refereeIds.length > 0) {
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    const refereesWithDeposit = await ctx.appDataSource.manager
+      .getRepository(TopUp)
+      .createQueryBuilder("t")
+      .select("DISTINCT t.target_user_id", "uid")
+      .where("t.target_user_id IN (:...ids)", { ids: refereeIds })
+      .andWhere("t.status = :status", { status: TopUpStatus.Completed })
+      .getRawMany<{ uid: number }>();
+    const countWithDeposit = refereesWithDeposit.length;
+    conversionPercent = count > 0 ? Math.round((countWithDeposit / count) * 100) : 0;
+    const depositSumResult = await ctx.appDataSource.manager
+      .getRepository(TopUp)
+      .createQueryBuilder("t")
+      .select("COALESCE(SUM(t.amount), 0)", "total")
+      .where("t.target_user_id IN (:...ids)", { ids: refereeIds })
+      .andWhere("t.status = :status", { status: TopUpStatus.Completed })
+      .getRawOne<{ total: string }>();
+    const depositSum = Number(depositSumResult?.total ?? 0);
+    avgDepositPerReferral = countWithDeposit > 0 ? Math.round((depositSum / countWithDeposit) * 100) / 100 : 0;
+    const active30Result = await ctx.appDataSource.manager
+      .getRepository(TopUp)
+      .createQueryBuilder("t")
+      .select("COUNT(DISTINCT t.target_user_id)", "cnt")
+      .where("t.target_user_id IN (:...ids)", { ids: refereeIds })
+      .andWhere("t.status = :status", { status: TopUpStatus.Completed })
+      .andWhere("t.createdAt >= :since", { since: thirtyDaysAgo })
+      .getRawOne<{ cnt: string }>();
+    activeReferrals30d = Number(active30Result?.cnt ?? 0);
+  }
+  const referralKeyboard = new InlineKeyboard()
+    .text("⚡ Top-up %", "admin-referrals-change-percent-topup")
+    .row()
+    .text("🌐 Domains %", "admin-referrals-change-percent-domain")
+    .text("🖥 VDS %", "admin-referrals-vds-menu")
+    .row()
+    .text("🖥 Dedicated %", "admin-referrals-dedicated-menu")
+    .text("☁ CDN %", "admin-referrals-change-percent-cdn")
+    .row()
+    .text(ctx.t("button-back"), "admin-referrals-back");
+  const referralPercent = user.referralPercent != null ? user.referralPercent : 5;
+  const referralBalance = Math.round((user.referralBalance ?? 0) * 100) / 100;
+  const text = ctx.t("admin-user-referrals-summary", {
+    link,
+    count,
+    conversionPercent,
+    avgDepositPerReferral,
+    referralPercent,
+    activeReferrals30d,
+    referralBalance,
+  });
+  return { text, reply_markup: referralKeyboard };
+}
+
 const sorting = (
   orderBy: SessionData["other"]["controlUsersPage"]["orderBy"],
   sortBy: SessionData["other"]["controlUsersPage"]["sortBy"]
@@ -267,19 +338,29 @@ export const controlUsers = new Menu<AppContext>("control-users", {})
 
       const maxPages = Math.max(0, Math.ceil(total / LIMIT_ON_PAGE) - 1);
 
+      const formatBalance = (b: number) => (Number.isFinite(b) ? String(Math.round(b * 100) / 100) : "0");
+
       for (const user of users) {
         let displayName = "";
         try {
           const chat = await ctx.api.getChat(user.telegramId) as { username?: string; first_name?: string; last_name?: string };
-          const un = chat.username ?? [chat.first_name, chat.last_name].filter(Boolean).join(" ").trim();
-          displayName = un || `#${user.telegramId}`;
+          if (chat.username) {
+            displayName = `@${chat.username}`;
+          } else {
+            const fullName = [chat.first_name, chat.last_name].filter(Boolean).join(" ").trim();
+            displayName = fullName || `TG ${user.telegramId}`;
+          }
         } catch {
-          displayName = `#${user.telegramId}`;
+          displayName = `TG ${user.telegramId}`;
         }
+        const maxLabelLen = 35;
+        const shortName = displayName.length > maxLabelLen ? displayName.slice(0, maxLabelLen - 1) + "…" : displayName;
+        const balanceStr = formatBalance(user.balance);
+        const rowLabel = `№${user.id} · ${shortName} · ${balanceStr} $`;
 
         range
           .text(
-            `ID: ${displayName} (${user.id}) - ${user.balance} $`,
+            rowLabel,
             async (ctx) => {
               try {
                 await ctx.answerCallbackQuery().catch(() => {});
@@ -374,72 +455,8 @@ export const controlUser = new Menu<AppContext>("control-user", {})
     range.text((ctx) => ctx.t("button-partnership-short"), async (ctx) => {
       await ctx.answerCallbackQuery().catch(() => {});
       try {
-        const referralService = new ReferralService(ctx.appDataSource, new UserRepository(ctx.appDataSource));
-        const link = await referralService.getReferralLink(user.id);
-        const count = await referralService.countReferrals(user.id);
-        const referees = await ctx.appDataSource.manager.find(User, {
-          where: { referrerId: user.id },
-          select: ["id"],
-        });
-        const refereeIds = referees.map((r) => r.id);
-        let conversionPercent = 0;
-        let avgDepositPerReferral = 0;
-        let activeReferrals30d = 0;
-        if (refereeIds.length > 0) {
-          const thirtyDaysAgo = new Date();
-          thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-          const refereesWithDeposit = await ctx.appDataSource.manager
-            .getRepository(TopUp)
-            .createQueryBuilder("t")
-            .select("DISTINCT t.target_user_id", "uid")
-            .where("t.target_user_id IN (:...ids)", { ids: refereeIds })
-            .andWhere("t.status = :status", { status: TopUpStatus.Completed })
-            .getRawMany<{ uid: number }>();
-          const countWithDeposit = refereesWithDeposit.length;
-          conversionPercent = count > 0 ? Math.round((countWithDeposit / count) * 100) : 0;
-          const depositSumResult = await ctx.appDataSource.manager
-            .getRepository(TopUp)
-            .createQueryBuilder("t")
-            .select("COALESCE(SUM(t.amount), 0)", "total")
-            .where("t.target_user_id IN (:...ids)", { ids: refereeIds })
-            .andWhere("t.status = :status", { status: TopUpStatus.Completed })
-            .getRawOne<{ total: string }>();
-          const depositSum = Number(depositSumResult?.total ?? 0);
-          avgDepositPerReferral = countWithDeposit > 0 ? Math.round((depositSum / countWithDeposit) * 100) / 100 : 0;
-          const active30Result = await ctx.appDataSource.manager
-            .getRepository(TopUp)
-            .createQueryBuilder("t")
-            .select("COUNT(DISTINCT t.target_user_id)", "cnt")
-            .where("t.target_user_id IN (:...ids)", { ids: refereeIds })
-            .andWhere("t.status = :status", { status: TopUpStatus.Completed })
-            .andWhere("t.createdAt >= :since", { since: thirtyDaysAgo })
-            .getRawOne<{ cnt: string }>();
-          activeReferrals30d = Number(active30Result?.cnt ?? 0);
-        }
-        const referralKeyboard = new InlineKeyboard()
-          .text("⚡ Top-up %", "admin-referrals-change-percent-topup")
-          .row()
-          .text("🌐 Domains %", "admin-referrals-change-percent-domain")
-          .text("🖥 VDS %", "admin-referrals-change-percent-vds")
-          .row()
-          .text("🖥 Dedicated %", "admin-referrals-change-percent-dedicated")
-          .text("☁ CDN %", "admin-referrals-change-percent-cdn")
-          .row()
-          .text(ctx.t("button-back"), "admin-referrals-back");
-        const referralPercent = user.referralPercent != null ? user.referralPercent : 5;
-        const referralBalance = Math.round((user.referralBalance ?? 0) * 100) / 100;
-        await ctx.reply(
-          ctx.t("admin-user-referrals-summary", {
-            link,
-            count,
-            conversionPercent,
-            avgDepositPerReferral,
-            referralPercent,
-            activeReferrals30d,
-            referralBalance,
-          }),
-          { parse_mode: "HTML", reply_markup: referralKeyboard }
-        );
+        const { text, reply_markup } = await buildReferralSummaryMessage(ctx, user);
+        await ctx.reply(text, { parse_mode: "HTML", reply_markup });
       } catch (e: any) {
         await ctx.reply(ctx.t("error-unknown", { error: String(e?.message || e).slice(0, 200) }), {
           parse_mode: "HTML",
